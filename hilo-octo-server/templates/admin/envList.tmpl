@@ -1,0 +1,62 @@
+{{template "header" .}}
+<main class="mdl-layout__content">
+    <div class="center">
+        <div class="mdl-grid">
+            <div class="page-content">
+                <h4>
+                    {{.App.AppName}} Env List
+                </h4>
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <div class="mdl-layout-spacer"></div>
+            <div>
+                <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised" onclick="location.href='/a/{{.App.AppId}}/env/add'">
+                    <i class="material-icons">add</i> ADD ENV
+                </button>
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                <thead>
+                <tr>
+                    <th>EnvID</th>
+                    <th>Name</th>
+                    <th>Detail</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .pagination.ShowList }}
+                <tr>
+                    <td>{{.EnvId}}</td>
+                    <td>{{.Name}}</td>
+                    <td>{{.Detail.String}}</td>
+                </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+        <div class="mdl-grid">
+            <div class="pagination">
+                {{ template "fragmentsPagination.tmpl" . }}
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <button id="back" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                <i class="material-icons">arrow_back</i> Back
+            </button>
+        </div>
+    </div>
+
+
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    jQuery(document).ready(function() {
+        $("#back").click(function() {
+            window.location.href='/'
+        });
+    });
+</script>
+
+{{template "footer" .}}

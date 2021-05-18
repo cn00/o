@@ -1,0 +1,170 @@
+{{template "header" .}}
+
+<link rel="stylesheet" href="/static/css/getmdl-select.min.css">
+<script defer src="/static/js/getmdl-select.min.js"></script>
+
+<main class="mdl-layout__content center">
+	<div class="mdl-grid">
+		<h4> {{.App.AppName}} </h4>
+	</div>
+
+
+	<form method="post" action="/a/{{.App.AppId}}/v/{{.Version.VersionId}}/update">
+		<div class="mdl-grid">
+			<div class="page-content">
+				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+					<tr>
+						<th>ID</th>
+						<td class="">{{.Version.VersionId}}</td>
+					</tr>
+					<tr>
+						<th>Description</th>
+						<td class="mdl-data-table__cell--non-numeric">
+							<div class="mdl-textfield mdl-js-textfield">
+								<input class="mdl-textfield__input" type="text" id="description" name="description"
+									   value="{{.Version.Description}}">
+								<label class="mdl-textfield__label" for="description">Text...</label>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>MaxRevision</th>
+						<td class="">{{.Version.MaxRevision}}</td>
+					</tr>
+					<tr>
+						<th>CopyVersionId</th>
+						<td class="mdl-data-table__cell--non-numeric">
+							<div class="mdl-textfield mdl-js-textfield">
+								<input class="mdl-textfield__input" type="text" id="copyVersionId" name="copyVersionId"
+									   pattern="-?[0-9]*(\.[0-9]+)?"
+									   value="{{if .Version.CopyVersionId.Valid}}{{.Version.CopyVersionId.Int64}}{{end}}">
+								<label class="mdl-textfield__label" for="copyVersionId">Number...</label>
+								<span class="mdl-textfield__error">Input is not a number!</span>
+							</div>
+						</td>
+
+					</tr>
+					<tr>
+						<th>CopyAppId</th>
+						<td class="mdl-data-table__cell--non-numeric">
+							<div class="mdl-textfield mdl-js-textfield">
+								<input class="mdl-textfield__input" type="text" id="copyAppId" name="copyAppId"
+									   pattern="-?[0-9]*(\.[0-9]+)?"
+									   value="{{if .Version.CopyAppId.Valid}}{{.Version.CopyAppId.Int64}}{{end}}">
+								<label class="mdl-textfield__label" for="copyAppId">Number...</label>
+								<span class="mdl-textfield__error">Input is not a number!</span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>Environment</th>
+						<td class="mdl-data-table__cell--non-numeric">
+							<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select">
+                                {{ if and (.Version.EnvId.Valid) (ne .Version.EnvId.Int64 0) }}
+                                    {{ range .EnvList }}
+                                        {{ if eq .EnvId $.Version.EnvId.Int64 }}
+											<input class="mdl-textfield__input" id="envValue" name="envValue"
+												   value="{{.Name}}" type="text" tabIndex="-1" data-val="{{.EnvId}}"/>
+											<input type="hidden" id="envId" name="envId" value="{{.EnvId}}">
+                                        {{ end }}
+                                    {{ end }}
+                                {{ else }}
+									<input class="mdl-textfield__input" id="envValue" name="envValue" value=""
+										   type="text" tabIndex="-1" data-val=""/>
+									<input type="hidden" id="envId" name="envId" value="">
+                                {{ end }}
+								<ul id="envValueUL" class="mdl-menu mdl-menu--bottom-left mdl-js-menu" for="envValue">
+                                    {{ range .EnvList }}
+										<li class="mdl-menu__item" data-val="{{.EnvId}}">{{.Name}}</li>
+                                    {{ end }}
+								</ul>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<th>API AES Key</th>
+						<td class="mdl-data-table__cell--non-numeric">
+							<div class="mdl-textfield mdl-js-textfield">
+								<input class="mdl-textfield__input" type="text" id="apiaeskey" name="apiaeskey"
+									   value="{{.Version.ApiAesKey}}" maxlength="32">
+								<label class="mdl-textfield__label" for="apiaeskey">Text（max 32 chars）</label>
+							</div>
+							<div id="tt1" class="icon material-icons">info</div>
+                            <div class="mdl-tooltip" for="tt1">SHA-256でハッシュ化されるため<br>入力文字列と強度は無関係です</div>
+						</td>
+					</tr>
+				</table>
+
+			</div>
+		</div>
+
+		<div class="mdl-grid">
+			<button id="back" type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+				<i class="material-icons">arrow_back</i> Back
+			</button>
+			&nbsp;
+			<button id="edit" type="submit"
+					class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+				<i class="material-icons">save</i> Edit
+			</button>
+
+		</div>
+	</form>
+	<div class="mdl-grid">
+		<div class="mdl-layout-spacer"></div>
+		<form id="deleteForm" method="post" action="/a/{{.App.AppId}}/v/{{.Version.VersionId}}/delete">
+		</form>
+		<button id="delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+			<i class="material-icons">delete</i> Delete
+		</button>
+
+	</div>
+
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    var envValueEle = document.getElementById('envValue');
+    var envValueULEle = document.getElementById('envValueUL');
+    var envIdSelectAction = function () {
+        var eid = envValueEle.getAttribute('data-val');
+        document.getElementById('envId').value = eid;
+    }
+
+    envValueULEle.addEventListener("click", envIdSelectAction);
+
+    jQuery(document).ready(function () {
+        $("#back").click(function () {
+            window.location.href = '/a/{{ .App.AppId }}/v/{{.Version.VersionId}}/file'
+        });
+    });
+</script>
+<link rel="stylesheet" href="/static/css/mdl-jquery-modal-dialog.css">
+<script src="/static/js/mdl-jquery-modal-dialog.js"></script>
+<script src="/static/js/dialog.js"></script>
+<script src="/static/js/select-util.js"></script>
+<script>
+    (function () {
+        'use strict';
+        $("#delete").click(function () {
+            showDialog({
+                title: 'Delete {{.Version.Description}}',
+                text: [
+                    'Delete version ID ', '{{.Version.VersionId}}', ("<br/>")
+                ].join(''),
+                negative: {
+                    title: 'Cancel'
+                },
+                positive: {
+                    title: 'Ok',
+                    onClick: function () {
+                        $('#deleteForm').submit();
+                        return true;
+                    }
+                },
+                cancelable: false
+            });
+        });
+    }())
+</script>
+{{template "footer" .}}

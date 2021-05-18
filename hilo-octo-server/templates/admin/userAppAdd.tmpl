@@ -1,0 +1,52 @@
+{{template "header" .}}
+
+    <main class="mdl-layout__content center">
+        <div class="mdl-grid">
+            {{ if eq .appId 0 }}
+            <h4>Admin </h4>
+            {{ else }}
+            <h4>{{.app.AppName}} </h4>
+            {{ end }}
+        </div>
+
+        <div class="mdl-grid">
+        <div class="page-content">
+                <form action="/a/{{ .appId }}/userapp/add" method="POST">
+                    <div class="mdl-card__supporting-text">
+
+                        <div class="mdl-textfield mdl-js-textfield" style="width:100%">
+                            <input class="mdl-textfield__input" name="userId" type="text" id="sample3" style="width:100%">
+                            <label class="mdl-textfield__label" for="sample3">UserId</label>
+                            <small class="mdl-color-text--red">{{ .userIdError }}</small>
+                        </div>
+
+                        <div class="mdl-textfield mdl-js-textfield" style="width:100%">
+                            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
+                                <input type="radio" id="option-1" class="mdl-radio__button" name="roleType" value="1" checked>
+                                <span class="mdl-radio__label">USER</span>
+                            </label>
+                            <br>
+                            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
+                                <input type="radio" id="option-2" class="mdl-radio__button" name="roleType" value="2">
+                                <span class="mdl-radio__label">ADMIN</span>
+                            </label>
+                            <br>
+                            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-3">
+                                <input type="radio" id="option-3" class="mdl-radio__button" name="roleType" value="3">
+                                <span class="mdl-radio__label">READER</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mdl-card__actions mdl-card--border">
+                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="width:100%">
+                            ADD
+                        </button>
+                    </div>
+                </form>
+
+        </div>
+        </div>
+    </main>
+
+{{template "footer" .}}

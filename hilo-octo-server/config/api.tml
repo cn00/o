@@ -1,0 +1,29 @@
+[api]
+port = 8080
+read_only = false
+minimum_cli_version = 0.0
+env_check = false
+
+[database.master]
+addrs = "localhost:3306"
+dbname = "octo"
+user = "root"
+password = ""
+
+[database.slave]
+addrs = "localhost:3306"
+dbname = "octo"
+user = "root"
+password = ""
+
+[metrics]
+port = 2000
+
+[cache_apps]
+list_api = [ 1 ]
+
+[cdn]
+default = "https://storage.googleapis.com"
+
+[cdn.apps]
+1 = "https://dte55e4tmkmud.cloudfront.net"

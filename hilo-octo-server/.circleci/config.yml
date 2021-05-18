@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/QualiArts/hilo-octo-server
+    docker:
+    - image: circleci/golang:1.14.2
+    steps:
+    - run: echo 'export PATH=${GOPATH}/bin/:${PATH}' >> $BASH_ENV
+    - checkout
+    #      - run: curl https://glide.sh/get | sh
+    #      - run: glide get github.com/Masterminds/cookoo
+    - add_ssh_keys:
+        fingerprints:
+          - "86:60:0e:6f:dc:c6:ca:8b:52:09:6f:72:ba:98:a6:70"
+    - run: go mod download
+    - run: go vet ./src/...
+    - run: go test octo-api
+    - run:
+        name: linux build
+        command: GOOS=linux GOARCH=amd64 go build -o bin/octo-api-linux-amd64 octo-api
+    - run:
+        name: windows build
+        command: GOOS=windows GOARCH=amd64 go build -o bin/octo-api-windows-amd64 octo-api
+    - run:
+        name: mac build
+        command: GOOS=darwin GOARCH=amd64 go build -o bin/octo-api-darwin-amd64 octo-api
+    - run:
+        name: linux admin build
+        command: GOOS=linux GOARCH=amd64 go build -o bin/octo-admin-linux-amd64 octo-admin
+    - run:
+        name: windows admin build
+        command: GOOS=windows GOARCH=amd64 go build -o bin/octo-admin-windows-amd64 octo-admin
+    - run:
+        name: mac admin build
+        command: GOOS=darwin GOARCH=amd64 go build -o bin/octo-admin-darwin-amd64 octo-admin
+    - run:
+        name: zip octo-server
+        command: zip -j octo-server.zip /go/src/github.com/QualiArts/hilo-octo-server/bin/*
+        working_directory: ./octo
+    - store_artifacts:
+        path: ./octo/octo-server.zip
+        destination: octo-server.zip

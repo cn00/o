@@ -1,0 +1,142 @@
+{{template "header" .}}
+
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        <h4> {{.AppForm.AppName}} </h4>
+    </div>
+
+    <form id="editForm" method="post" action="/a/{{.AppForm.AppId}}/update">
+        <div class="mdl-grid">
+            <div class="page-content">
+
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <tr>
+                        <th>ID</th>
+                        <td class="mdl-data-table__cell--non-numeric">{{.AppForm.AppId}}</td>
+                        <input type="hidden" id="appId" name="appId" value="{{.AppForm.AppId}}">
+                    </tr>                <tr>
+                    <th class="">Name</th>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" id="appName" name="appName" value="{{.AppForm.AppName}}">
+                            <label class="mdl-textfield__label" for="appName">Text...</label>
+                        </div>
+                    </td>
+                </tr>
+
+                    <tr>
+                        <th>Description</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{.AppForm.Description}}">
+                                <label class="mdl-textfield__label" for="description">Text...</label>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>ImageUrl</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="imageUrl" name="imageUrl" value="{{.AppForm.ImageUrl}}">
+                                <label class="mdl-textfield__label" for="imageUrl">Text...</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>GCS Bucket</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="bucket" name="bucket" value="{{.AppForm.Bucket}}">
+                                <label class="mdl-textfield__label" for="bucket">Bucket名は開発Appと本番Appを統一</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>AppSecretKey</th>
+                        <td class="mdl-data-table__cell--non-numeric">{{.AppForm.AppSecretKey}}</td>
+                        <input type="hidden" id="appSecretKey" name="appSecretKey" value="{{.AppForm.AppSecretKey}}">
+                    </tr>
+                    <tr>
+                        <th>ClientSecretKey</th>
+                        <td class="mdl-data-table__cell--non-numeric">{{.AppForm.ClientSecretKey}}</td>
+                        <input type="hidden" id="clientSecretKey" name="clientSecretKey" value="{{.AppForm.ClientSecretKey}}">
+                    </tr>
+                    <tr>
+                        <th class="">AES key</th>
+                        <td class="mdl-data-table__cell--non-numeric">{{.AppForm.AesKey}}</td>
+                        <input type="hidden" id="aesKey" name="aesKey" value="{{.AppForm.AesKey}}">
+                    </tr>
+                    <tr>
+                        <th>GCS ProjectID</th>
+                        <td class="mdl-data-table__cell--non-numeric">{{.AppForm.ProjectId}}</td>
+                        <input type="hidden" id="projectId" name="projectId" value="{{.AppForm.ProjectId}}">
+                    </tr>
+                    <tr>
+                        <th>GCS Location</th>
+                        <td class="mdl-data-table__cell--non-numeric">{{.AppForm.Location}}</td>
+                        <input type="hidden" id="location" name="location" value="{{.AppForm.Location}}">
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </form>
+    {{ if .CanDelete }}
+    <form id="deleteForm" method="post" action="/a/{{.AppForm.AppId}}/delete"></form>
+    {{ end }}
+        <div class="mdl-grid">
+            <button id="back" type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                <i class="material-icons">arrow_back</i> Back
+            </button>
+            &nbsp;
+            <button id="edit" type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                <i class="material-icons">save</i> Edit
+            </button>
+            {{ if .CanDelete }}
+            <div class="mdl-layout-spacer"></div>
+            <button id="delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                <i class="material-icons">delete</i> Delete
+            </button>
+            {{ end }}
+        </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/mdl-jquery-modal-dialog.css">
+<script src="/static/js/mdl-jquery-modal-dialog.js"></script>
+<script src="/static/js/dialog.js"></script>
+<script src="/static/js/select-util.js"></script>
+<script>
+    jQuery(document).ready(function() {
+        $("#back").click(function() {
+            window.location.href='/'
+        });
+        $("#edit").click(function() {
+            $('#editForm').submit();
+        });
+
+        {{ if .CanDelete }}
+        $("#delete").click(function () {
+            showDialog({
+                title: 'Delete {{.AppForm.AppName}}',
+                text: [
+                    'Delete App ID ', '{{.AppForm.AppId}}', ("<br/>")
+                ].join(''),
+                negative: {
+                    title: 'Cancel'
+                },
+                positive: {
+                    title: 'Ok',
+                    onClick: function () {
+                        $('#deleteForm').submit();
+                        return true;
+                    }
+                },
+                cancelable: false
+            });
+        });
+        {{ end }}
+    });
+</script>
+
+{{template "footer" .}}

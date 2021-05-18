@@ -1,0 +1,5 @@
+[Api]
+base_url = "https://sbapi.octo-cloud.com"
+
+[App]
+id = 1

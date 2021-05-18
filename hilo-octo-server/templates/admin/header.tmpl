@@ -1,0 +1,95 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>{{.Title}}</title>
+
+    {{template "favicon" .}}
+
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        .demo-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        }
+        .demo-card-wide.mdl-card {
+        width: 100%;
+        }
+        .demo-card-wide > .mdl-card__title {
+        color: #fff;
+        height: 176px;
+        background: url('https://getmdl.io/assets/demos/welcome_card.jpg') center / cover;
+        }
+        .demo-card-wide > .mdl-card__menu {
+        color: #fff;
+        }
+        .demo-card-wide > .mdl-card__admin_title {
+        background: url('https://getmdl.io/assets/demos/transparent.jpg') center / cover;
+        }
+
+        .pagination .mdl-button {
+        min-width: 20px;
+        }
+
+        .material-icons.md-16 { font-size: 16px; }
+        .material-icons.md-18 { font-size: 18px; }
+        .material-icons.md-24 { font-size: 24px; }
+        .material-icons.md-36 { font-size: 36px; }
+        .material-icons.md-48 { font-size: 48px; }
+
+
+
+        .center {
+            display: table;
+            margin: 0 auto;
+        }
+
+        #user-menu {
+            cursor: pointer;
+        }
+
+        .mdl-layout__content {
+            overflow-x: auto;
+        }
+
+        .difference {
+            background-color: cornsilk;
+        }
+    </style>
+</head>
+
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout">
+    {{ if not .noHeader }}
+    <header class="mdl-layout__header mdl-layout--fixed-header">
+        <div class="mdl-layout__header-row" style="padding:0 16px 0 16px;">
+            <!-- Title -->
+            <span class="mdl-layout-title"><a href="/"><img alt="octo" src="https://storage.googleapis.com/octo-static/OctoIcon.png" style="border:0;height:50px;"></a></span>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation. We hide it in small screens. -->
+            {{ .User.UserId }} &nbsp;
+            <nav class="mdl-navigation" id="user-menu">
+                <img alt="gravatar" src="https://www.gravatar.com/avatar/{{ md5 .User.Email }}" class="demo-avatar">
+                <i class="material-icons">expand_more</i>
+            </nav>
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                for="user-menu">
+                <li class="mdl-menu__item"><a href="/logout" style="display:block;">Logout</a></li>
+                <li class="mdl-menu__item">Change avatar at <a href="http://www.gravatar.com" target="_blank">Gravatar</a></li>
+                <li class="mdl-menu__item" disabled>{{ .User.UserId }}</li>
+            </ul>
+        </div>
+
+    </header>
+    {{ end }}
+
+{{end}}

@@ -1,0 +1,4 @@
+{{ range $i, $elem := splitTags .Tag.String }}
+<a href="/a/{{$.AppId}}/v/{{$.VersionId}}/file?tag={{$elem|urlquery}}">{{$elem}}</a>
+{{ if eq (mod $i 5) 4}}<br>{{ end }}
+{{ end }}

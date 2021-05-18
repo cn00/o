@@ -1,0 +1,4 @@
+---
+  - include: install_mysqld_5_6.yml
+  - include: create_db.yml
+

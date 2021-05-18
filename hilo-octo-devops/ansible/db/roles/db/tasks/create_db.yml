@@ -1,0 +1,11 @@
+- name: Create a new database with name 'octo'
+  mysql_db:
+    name: octo
+    encoding: utf8
+    state: present
+
+- name: Import sql
+  mysql_db:
+    state: import
+    name: octo
+    target: "{{ mysqld_5_6.sql_file }}"

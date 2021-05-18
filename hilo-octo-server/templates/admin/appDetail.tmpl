@@ -1,0 +1,59 @@
+{{template "header" .}}
+
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        <h4> {{.App.AppName}} </h4>
+    </div>
+
+    <div class="mdl-grid">
+        <div class="page-content">
+
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                <tr>
+                    <th>ID</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.AppId}}</td>
+                </tr>
+                <tr>
+                    <th class="">Name</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.AppName}}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.Description}}</td>
+                </tr>
+                <tr>
+                    <th>ImageUrl</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.ImageUrl.String}}</td>
+                </tr>
+                <tr>
+                    <th>AppSecretKey</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.AppSecretKey}}</td>
+                </tr>
+                <tr>
+                    <th>ClientSecretKey</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.ClientSecretKey}}</td>
+                </tr>
+                <tr>
+                    <th class="">AES key</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.App.AesKey}}</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <div class="mdl-grid">
+        <button id="back" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+            <i class="material-icons">arrow_back</i> Back
+        </button>
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    jQuery(document).ready(function() {
+        $("#back").click(function() {
+            window.location.href='/'
+        });
+    });
+</script>
+
+{{template "footer" .}}

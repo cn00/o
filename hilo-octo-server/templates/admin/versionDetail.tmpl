@@ -1,0 +1,69 @@
+{{template "header" .}}
+
+<link rel="stylesheet" href="path_to/getmdl-select/getmdl-select.min.css">
+<script defer src="path_to/getmdl-select/getmdl-select.min.js"></script>
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        <h4> {{.App.AppName}} </h4>
+    </div>
+
+    <div class="mdl-grid">
+        <div class="page-content">
+
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                <tr>
+                    <th>ID</th>
+                    <td class="">{{.Version.AppId}}</td>
+                </tr>                <tr>
+                    <th>Description</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.Version.Description}}</td>
+                </tr>
+                <tr>
+                    <th>MaxRevision</th>
+                    <td class="">{{.Version.MaxRevision}}</td>
+                </tr>
+                <tr>
+                    <th>CopyVersionId</th>
+                    <td class="">{{if .Version.CopyVersionId.Valid}}{{.Version.CopyVersionId.Int64}}{{end}}</td>
+                </tr>
+
+                <tr>
+                    <th>CopyAppId</th>
+                    <td class="">{{if .Version.CopyAppId.Valid}}{{.Version.CopyAppId.Int64}}{{end}}</td>
+                </tr>
+
+                <tr>
+                    <th>Environment</th>
+                    {{ if and ( .Version.EnvId.Valid) (ne .Version.EnvId.Int64 0) }}
+                        {{ range .EnvList }}
+                            {{ if eq .EnvId $.Version.EnvId.Int64}}
+                                <td class="">{{.Name}}</td>
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                </tr>
+
+                <tr>
+                    <th>API AES Key</th>
+                    <td class="">{{.Version.ApiAesKey}}</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <div class="mdl-grid">
+        <button id="back" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+           <i class="material-icons">arrow_back</i> Back
+        </button>
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    jQuery(document).ready(function() {
+        $("#back").click(function() {
+            window.location.href='/a/{{ .App.AppId }}/v/{{.Version.VersionId}}/file'
+        });
+    });
+</script>
+
+{{template "footer" .}}

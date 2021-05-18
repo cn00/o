@@ -1,0 +1,12 @@
+[Unit]
+Description=octo-admin
+
+[Service]
+User=octo-admin
+Group=octo-admin
+WorkingDirectory=/var/www/octo-admin
+ExecStart=/var/www/octo-admin/bin/octo-admin -conf config.tml
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,118 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/mdl-jquery-modal-dialog.css">
+<script src="/static/js/mdl-jquery-modal-dialog.js"></script>
+<script src="/static/js/dialog.js"></script>
+<script src="/static/js/select-util.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    $("#delete").click(function() {
+        var selected = getSelectedFiles();
+        $('#deleteFileIds').val(selected.ids.join(","));
+        showDialog({
+            title: 'Delete',
+            text: [
+                'Delete selected ',
+                selected.filenames.length,
+                ' assetBundles:<br/>',
+                selected.filenames.join("<br/>")
+            ].join(''),
+            negative: {
+                title: 'Cancel'
+            },
+            positive: {
+                title: 'Ok',
+                onClick: function () {
+                    $('#deleteForm').submit();
+                    return true;
+                }
+            },
+            cancelable: false
+       });
+    });
+
+    $("#hard_delete").click(function() {
+        var selected = getSelectedFiles();
+        $('#deleteFileIds').val(selected.ids.join(","));
+        $('#deleteIsHard').val("true");
+        showDialog({
+            title: 'HARD Delete',
+            text: [
+                '<strong>HARD</strong> Delete selected ',
+                selected.filenames.length,
+                ' assetBundles:<br/>',
+                selected.filenames.join("<br/>")
+            ].join(''),
+            negative: {
+                title: 'Cancel'
+            },
+            positive: {
+                title: 'Ok',
+                onClick: function () {
+                    $('#deleteForm').submit();
+                    return true;
+                }
+            },
+            cancelable: false
+       });
+    });
+
+    $("#copy").click(function() {
+        var selected = getSelectedFiles();
+        showDialog({
+            title: 'Copy to Version {{.copyVersion.VersionId}} of App {{.copyVersion.AppId}}',
+            text: [
+                'Copy selected ',
+                selected.filenames.length,
+                ' assetBundles:<br/>',
+                selected.filenames.join("<br/>")
+            ].join(''),
+            negative: {
+                title: 'Cancel'
+            },
+            positive: {
+                title: 'Ok',
+                onClick: function() {
+                    showLoading();
+                    $.ajax({
+                        type: "POST",
+                        url: "/a/{{.appId}}/copySelectedFile",
+                        contentType: 'application/json;charset=utf-8',
+                        data: JSON.stringify({
+                            source_version_id: {{.versionId}},
+                            destination_version_id: {{.copyVersion.VersionId}},
+                            destination_app_id: {{.copyVersion.AppId}},
+                            filenames: selected.filenames
+                        }),
+                        success: function(data){
+                            hideLoading();
+                            showDialog({
+                                title: 'Copy Result',
+                                text: $.map(data.result, function(value, key) {
+                                    return [key, ': ', value, '<br/>'].join('');
+                                }).join(''),
+                                positive: {
+                                    title: 'Ok'
+                                }
+                            });
+                        },
+                        error: function(jqXHR) {
+                            hideLoading();
+                            showDialog({
+                                title: 'Copy Failed',
+                                text: [jqXHR.statusText, ' (', jqXHR.status, ')<br/>', jqXHR.responseText].join(''),
+                                positive: {
+                                    title: 'Ok'
+                                }
+                            });
+                        }
+                    });
+                    return true;
+                }
+            },
+            cancelable: false
+       });
+    });
+}())
+</script>

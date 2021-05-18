@@ -1,0 +1,11 @@
+[database.master]
+addrs = "localhost:3306"
+dbname = "octo"
+user = "root"
+password = "Vec2)xAz$3RT4V*3"
+
+[database.slave]
+addrs = "localhost:3306"
+dbname = "octo"
+user = "root"
+password = "Vec2)xAz$3RT4V*3"

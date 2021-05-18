@@ -1,0 +1,87 @@
+{{template "header" .}}
+
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+    </div>
+
+    <form method="post" action="/insertApp">
+        <div class="mdl-grid">
+            <div class="page-content">
+
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <tr>
+                        <th class="">AppId</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="appId" name="appId" value="{{.AppForm.AppId}}">
+                                <label class="mdl-textfield__label" for="appId">Number for AppId ex) 100</label>
+                                {{ if ne .error "" }}
+                                        {{ .error }}
+                                {{ end }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="">Name</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="appName" name="appName" value="{{.AppForm.AppName}}">
+                                <label class="mdl-textfield__label" for="appName">Text...</label>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Description</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{.AppForm.Description}}">
+                                <label class="mdl-textfield__label" for="description">Text...</label>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>ImageUrl</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="imageUrl" name="imageUrl" value="{{.AppForm.ImageUrl}}">
+                                <label class="mdl-textfield__label" for="imageUrl">Text...</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="email" name="email" value="{{.AppForm.Email}}">
+                                <label class="mdl-textfield__label" for="email">Text...</label>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <div class="mdl-grid">
+            <button id="back" type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                <i class="material-icons">arrow_back</i> Back
+            </button>
+            &nbsp;
+            <button id="new" type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                <i class="material-icons">save</i> New
+            </button>
+        </div>
+    </form>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    jQuery(document).ready(function() {
+        $("#back").click(function() {
+            window.location.href='/'
+        });
+    });
+</script>
+
+{{template "footer" .}}

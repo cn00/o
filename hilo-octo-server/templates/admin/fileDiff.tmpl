@@ -1,0 +1,151 @@
+{{template "header" .}}
+
+    <main class="mdl-layout__content">
+        <div class="center">
+            <div class="mdl-grid">
+                <div class="page-content">
+                    <h4>AssetBundle Version Diff</h4>
+                </div>
+            </div>
+            <div class="mdl-grid">
+                <form action="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/fileDiff" name="search">
+                    <div>
+                        From: <a href="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/file">{{.app.AppName}} {{.version.Description}}</a>
+                    </div>
+                    To:
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <select class="mdl-textfield__input" name="targetAppVersionId">
+                            {{ $t := .targetAppVersionIdParam }}
+                            {{ if eq $t "" }}<option value="" selected>(not selected)</option>{{ end }}
+                            {{ $appName := .app.AppName }}
+                            {{ range .appVersions }}
+                            {{ $value :=  print .AppId "_" .VersionId }}
+                            <option value="{{$value}}" {{ if eq $value $t }}selected{{end}}>
+                                {{ $appName }}
+                                {{.Description}}
+                                {{ if and ($.version.CopyVersionId.Valid) (eq .AppId $.app.AppId) (eq .VersionId $.version.CopyVersionId.Int64) }}
+                                (Default Copy To)
+                                {{ else if and ($.version.EnvId.Valid) (eq $.version.EnvId.Int64 .EnvId.Int64) }}
+                                (Can Copy)
+                                {{ end }}
+                            </option>
+                            {{ end }}
+                        </select>
+                    </div>
+                    <button type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                        <i class="material-icons">compare_arrows</i> Get Version Diff
+                    </button>
+                </form>
+            </div>
+            <div class="mdl-grid">
+                 <form action="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/fileDiff">
+                    <input type="hidden" name="targetAppVersionId" value="{{.targetAppVersionIdParam}}">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:200px;">
+                        <input class="mdl-textfield__input" type="text" id="search1" name="name" value="{{.nameParam}}">
+                        <label class="mdl-textfield__label" for="search1">File name...</label>
+                    </div>
+                     <div class="mdl-grid">
+                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px;">
+                             <input class="mdl-textfield__input" type="text" id="search2" name="fromdate" value="{{.fromDateParam}}">
+                             <label class="mdl-textfield__label" for="search2">From Date... ex)2017-10-21 15:00:00</label>
+                         </div>
+                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px;">
+                             <input class="mdl-textfield__input" type="text" id="search3" name="todate" value="{{.toDateParam}}">
+                             <label class="mdl-textfield__label" for="search3">To Date... ex)2017-10-22 15:00:00</label>
+                         </div>
+                     </div>
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="showdeleted" style="width:125px">
+                        <input type="checkbox" id="showdeleted" class="mdl-checkbox__input" name="showdeleted" value="true" {{if .showDeleted}}checked{{end}}>
+                        <span class="mdl-checkbox__label">Show deleted</span>
+                    </label>
+                    <input type="hidden" name="_showdeleted" value="on">
+                    <input type="hidden" name="limit" value="{{ .limit }}">
+                    <button type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                        <i class="material-icons">search</i> Search
+                    </button>
+                </form>
+            </div>
+            {{ if .adminFlg }}
+            <div class="mdl-grid">
+                <form action="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/fileDiffCsvOutput" name="csv">
+                    <input type="hidden" name="targetAppVersionId" value="{{.targetAppVersionIdParam}}">
+                    <input type="hidden" id="search1" name="name" value="{{.nameParam}}">
+                    <input type="hidden" id="search2" name="fromdate" value="{{.fromDateParam}}">
+                    <input type="hidden" id="search3" name="todate" value="{{.toDateParam}}">
+                    <input type="hidden" id="checkbox" name="showdeleted" {{if .showDeleted}}value="true"{{end}}>
+                    <input type="hidden" name="_showdeleted" value="on">
+                    <input type="hidden" name="limit" value="{{ .limit }}">
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        <i class="material-icons">cloud_download</i> Csv
+                    </button>
+                </form>
+            </div>
+            <div class="mdl-grid">
+                <div class="mdl-layout-spacer"></div>
+                <div>
+                    <h5>Search Result Count :   {{ .pagination.ResultCount }}</h5>
+                    {{if or (and (.version.CopyVersionId.Valid) (eq .targetAppVersionIdParam (print .app.AppId "_" .version.CopyVersionId.Int64))) (and ($.version.EnvId.Valid) (eq $.version.EnvId.Int64 $.copyVersion.EnvId.Int64))}}
+                    <button id="copy" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        <i class="material-icons">content_copy</i> Copy
+                    </button>
+                    {{ end }}
+                    <button id="delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        <i class="material-icons">delete</i> Delete
+                    </button>
+                </div>
+            </div>
+            {{ end }}
+            <div class="mdl-grid">
+                <div class="page-content">
+
+                    <div class="mdl-layout__tab-bar mdl-js-ripple-effect" style="width:100%;height:48px;padding:0">
+                        <a class="mdl-layout__tab is-active">AssetBundle</a>
+                        <a href="/a/{{.app.AppId}}/v/{{.version.VersionId}}/resourceDiff?targetAppVersionId={{.targetAppVersionIdParam}}" class="mdl-layout__tab">Resources</a>
+                    </div>
+
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+                        <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">AssetName</th>
+                            <th><i class="material-icons md-16">arrow_upward</i>ID</th>
+                            <th>revision</th>
+                            <th>size</th>
+                            <th>crc</th>
+                            <th class="mdl-data-table__cell--non-numeric">tag</th>
+                            <th class="mdl-data-table__cell--non-numeric">dependency</th>
+                            <th class="mdl-data-table__cell--non-numeric">datetime</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ range .pagination.ShowList }}
+                         <tr data-octo-fileId="{{.Id}}" data-octo-filename="{{.Filename}}" class="{{if .Diff.Absent}}difference{{end}}">
+                            <td class="mdl-data-table__cell--non-numeric name">
+                                <a href="/a/{{.AppId}}/v/{{.VersionId}}/file/{{.Id}}/detail">{{.Filename}}</a>
+                            </td>
+                            <td class="id">{{.Id}}</td>
+                            <td>{{.RevisionId}}</td>
+                            <td>{{.Size}}</td>
+                            <td class="{{if .Diff.Crc}}difference{{end}}">{{.Crc}}</td>
+                            <td class="mdl-data-table__cell--non-numeric {{if .Diff.Tag}}difference{{end}}">{{ template "fragmentsTag.tmpl" . }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ template "fragmentsDependency.tmpl" . }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{.UpdDatetime.Format "2006-01-02 15:04:05" }}</td>
+                        </tr>
+                        {{ end }}
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="mdl-grid">
+                <div class="pagination">
+                    {{ template "fragmentsPagination.tmpl" . }}
+                </div>
+            </div>
+        </div>
+    </main>
+    <form action="/a/{{.appId}}/v/{{.versionId}}/deleteSelectedFile" method="post" id="deleteForm">
+            <input type="hidden" id="deleteFileIds" name="fileids">
+    </form>
+{{template "fragmentsAssetBundleListScript.tmpl" .}}
+{{template "footer" .}}

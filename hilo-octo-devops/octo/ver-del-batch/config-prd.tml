@@ -1,0 +1,11 @@
+[database.master]
+addrs = "10.102.14.4:3306"
+dbname = "octo"
+user = "octo"
+password = "hilo"
+
+[database.slave]
+addrs = "10.102.14.15:3306,10.102.14.18:3306"
+dbname = "octo"
+user = "octo"
+password = "hilo"

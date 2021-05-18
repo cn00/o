@@ -1,0 +1,16 @@
+package octo;
+
+message Url {
+  required int32 revision = 1;
+  required string url = 2;
+  
+  enum State {
+    LATEST = 1;
+    OLD = 2; 
+ }
+  optional State state = 3 [default = LATEST];
+}
+
+message UrlList {
+	repeated Url url = 1;
+}

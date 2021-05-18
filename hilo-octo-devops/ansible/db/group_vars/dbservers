@@ -1,0 +1,11 @@
+# dbservers Variables
+for_host:
+  # remote user
+  remote_user: "Set SSH Remote user for MySQL host"
+mysqld_5_6:
+  # config file for confirm connect to MySQL Server
+  defaults_file: /root/.my.cnf
+  # OCTO DDL file
+  sql_file: /tmp/octo.sql
+  # Set IP Range for access to MySQL
+  server_range: "SET App Server IP RANGE for access to MySQL"

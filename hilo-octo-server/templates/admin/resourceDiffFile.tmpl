@@ -1,0 +1,38 @@
+{{template "header" .}}
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.3/diff2html.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/3.4.0/diff.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.3/diff2html.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.3.3/diff2html-ui.min.js"></script>
+<style>
+    .page-content {
+        max-width: 900px;
+    }
+</style>
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        <div class="page-content">
+            <div id="diff"></div>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                $.get("{{.fileUrl.Url}}", function(data) {
+                    {{ if ne .tfileUrl.Url "" }}
+                    $.get("{{.tfileUrl.Url}}", function(tdata) {
+                    {{ else }}
+                        var tdata = "";
+                    {{ end }}
+                        const unifiedDiff = JsDiff.createPatch("{{.file.Filename}}", tdata, data, "", "");
+                        const diff2htmlUi = new Diff2HtmlUI({diff: unifiedDiff});
+                        diff2htmlUi.draw('#diff', {inputFormat: 'json', showFiles: false, matching: 'lines'});
+                    {{ if ne .tfileUrl.Url "" }}
+                    });
+                    {{ end }}
+                });
+            });
+            </script>
+        </div>
+    </div>
+</main>
+
+{{template "footer" .}}

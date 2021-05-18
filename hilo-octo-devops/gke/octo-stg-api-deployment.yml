@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: octo-stg-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: stg-api
+  template:
+    metadata:
+      labels:
+        name: stg-api
+        deploy-date: ${DEPLOY_DATE}
+    spec:
+      containers:
+      - name: stg-api
+        image: asia.gcr.io/hilo-1047/octo-api:${VERSION}
+        resources:
+          requests:
+            cpu: 200m
+        volumeMounts:
+        - mountPath: /octo/etc
+          name: config
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      volumes:
+        - name: config
+          configMap:
+            name: octo-config
+  revisionHistoryLimit: 100

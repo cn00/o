@@ -1,0 +1,37 @@
+{{template "header" .}}
+
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        {{ if eq .appId 0 }}
+        <h4>Admin </h4>
+        {{ else }}
+        <h4>{{.App.AppName}} Add Env </h4>
+        {{ end }}
+    </div>
+
+    <div class="mdl-grid">
+        <div class="page-content">
+            <form action="/a/{{ .appId }}/env/add" method="POST">
+                <div class="mdl-card__supporting-text">
+
+                    <div class="mdl-textfield mdl-js-textfield" style="width:100%">
+                        <input class="mdl-textfield__input" name="name" type="text" id="envname" style="width:100%">
+                        <label class="mdl-textfield__label" for="envname">Name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield" style="width:100%">
+                        <input class="mdl-textfield__input" name="detail" type="text" id="envdetail" style="width:100%">
+                        <label class="mdl-textfield__label" for="envdetail">Detail</label>
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" style="width:100%">
+                        ADD
+                    </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
+
+{{template "footer" .}}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Login - OCTO</title>
+
+    {{template "favicon" .}}
+
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        .material-icons.md-16 { font-size: 16px; }
+        .material-icons.md-18 { font-size: 18px; }
+        .material-icons.md-24 { font-size: 24px; }
+        .material-icons.md-36 { font-size: 36px; }
+        .material-icons.md-48 { font-size: 48px; }
+
+        /*Wide card with share menu button*/
+        .demo-card-wide.mdl-card {
+            width: 512px;
+        }
+        .demo-card-wide > .mdl-card__title {
+            color: #fff;
+            height: 176px;
+            background: url('https://storage.googleapis.com/octo-static/gyazo/f7cd7d83f03f02a8e798839eb7a93bb3.png') center / cover
+        }
+        .demo-card-wide > .mdl-card__menu {
+            color: #fff;
+        }
+
+        .mdl-layout__content {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-content {
+            margin-top: 80px;
+        }
+    </style>
+</head>
+
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row" style="padding:0 16px 0 16px;">
+            <!-- Title -->
+            <span class="mdl-layout-title"><a href="/"><img border="0" src="https://storage.googleapis.com/octo-static/OctoIcon.png" style="height:50px;"></a></span>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation. We hide it in small screens. -->
+        </div>
+
+    </header>
+
+<main class="mdl-layout__content">
+    <div class="page-content">
+        <div class="mdl-grid">
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+                <div class="mdl-card__title">
+                    <img border="0" src="https://storage.googleapis.com/octo-static/OctoLogo.png" style="height:150px;">
+                </div>
+                {{ if .isOauthGoogle }}
+                <form action="/google/login" method="POST">
+                    <div class="mdl-card__actions mdl-card--border">
+                        <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                            Login with Google
+                        </button>
+                    </div>
+                </form>
+                {{ else }}
+                <form action="/login" method="POST">
+                    <div class="mdl-card__supporting-text">
+
+                        <div class="mdl-textfield mdl-js-textfield" style="width:100%">
+                            <input class="mdl-textfield__input" name="id" type="text" id="sample3" style="width:100%">
+                            <label class="mdl-textfield__label" for="sample3">ID...</label>
+                        </div>
+
+                        <div class="mdl-textfield mdl-js-textfield" style="width:100%">
+                            <input class="mdl-textfield__input" name="password" type="password" id="sample1" style="width:100%">
+                            <label class="mdl-textfield__label" for="sample1">Text...</label>
+                        </div>
+                    </div>
+
+                    <div class="mdl-card__actions mdl-card--border">
+                        <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                            Login
+                        </button>
+                    </div>
+                </form>
+                {{ end }}
+            </div>
+
+        </div>
+
+    </div>
+</main>
+</html>

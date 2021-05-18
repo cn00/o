@@ -1,0 +1,144 @@
+{{template "header" .}}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        <h4> {{ .app.AppName }} {{.version.Description}} </h4>
+    </div>
+
+    <div class="mdl-grid">
+        <div class="page-content">
+
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                <tr>
+                    <th class="">FileName</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Filename}}</td>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Id}}</td>
+                </tr>
+                <tr>
+                    <th>revision</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.RevisionId}}</td>
+                </tr>
+                {{ if or (eq .fileExt ".txt") }}
+                <tr>
+                    <th>Preview</th>
+                    <td class="mdl-data-table__cell--non-numeric"><textarea id="preview" class="mdl-textfield__input" readonly></textarea></td>
+                    <script type="text/javascript">
+                    jQuery(document).ready(function(){
+                        $("#preview").load("{{.fileUrl.Url}}");
+                    });
+                    </script>
+                </tr>
+                {{ end }}
+                {{ if or (eq .fileExt ".png") (eq .fileExt ".jpg") (eq .fileExt ".jpeg") (eq .fileExt ".gif") (eq .fileExt ".bmp") (eq .fileExt ".svg") }}
+                <tr>
+                    <th>Preview</th>
+                    <td class="mdl-data-table__cell--non-numeric"><img src="{{.fileUrl.Url}}" /></td>
+                </tr>
+                {{ end }}
+                {{ if or (eq .fileExt ".wav") (eq .fileExt ".mp3") (eq .fileExt ".ogg") }}
+                <tr>
+                    <th>Preview</th>
+                    <td class="mdl-data-table__cell--non-numeric"><audio controls src="{{.fileUrl.Url}}" /></td>
+                </tr>
+                {{ end }}
+                {{ if or (eq .fileExt ".mp4") (eq .fileExt ".ogv") }}
+                <tr>
+                    <th>Preview</th>
+                    <td class="mdl-data-table__cell--non-numeric"><video controls><source src="{{.fileUrl.Url}}" type="{{ if (eq .fileExt ".ogv") }}video/ogg{{ else }}video/mp4{{ end }}"></video></td>
+                </tr>
+                {{ end }}
+                <tr>
+                    <th class="">url</th>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        {{.fileUrl.Url}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>size</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Size}}</td>
+                </tr>
+                <tr>
+                    <th>MD5</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Md5.String}}</td>
+                </tr>
+                <tr>
+                    <th class="">tag</th>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" id="tag" value="{{.file.Tag.String}}">
+                            <label class="mdl-textfield__label" for="tag">Comma Delimited Text...</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>BuildNumber</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{ .file.BuildNumber.String }}</td>
+                </tr>
+                <tr>
+                    <th class="">datetime</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.UpdDatetime.Format "2006-01-02 15:04:05"}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="mdl-grid">
+        <button id="back" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+           Back
+        </button>
+        {{ if ne .file.State 4 }}
+        {{ if .updaterFlg }}
+        &nbsp;
+        <button id="edit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+            Edit
+        </button>
+        {{ end }}
+        {{ if .adminFlg }}
+        &nbsp;
+        <button id="delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Delete
+        </button>
+        {{ end }}
+        {{ end }}
+
+    </div>
+</main>
+<script type="text/javascript">
+    jQuery(document).ready( function() {
+        $("#back").click(function(){
+            window.location.href='/a/{{ .file.AppId }}/v/{{.file.VersionId}}/resource'
+        });
+        $("#edit").click(function(){
+            var tagParam = $("#tag").val();
+            $.ajax({
+                url: "/a/{{.file.AppId}}/v/{{.file.VersionId}}/resource/{{.file.Id}}/update",
+                type:'POST',
+                dataType: 'json',
+                data : {tag : tagParam },
+                success: function(data) {
+                        alert("ok");
+                        window.location.href = "/a/{{.file.AppId}}/v/{{.file.VersionId}}/resource/{{.file.Id}}/detail"
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                             alert("error");
+                       }
+              });
+        });
+        $("#delete").click(function(){
+            if(confirm('Are sure want to delete record?')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/a/{{.file.AppId}}/v/{{.file.VersionId}}/resource/{{.file.Id}}/delete",
+                    success: function(msg){
+                        window.location.href = "/a/{{.file.AppId}}/v/{{.file.VersionId}}/resource/{{.file.Id}}/detail"
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+{{template "footer" .}}

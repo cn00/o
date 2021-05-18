@@ -1,0 +1,87 @@
+---
+# install mysqld_5.6
+- name:  Register mysql on the Yum Repository
+  yum:
+    name: http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    state: present
+
+- name: Install libselinux-python
+  yum:
+    name: libselinux-python
+    state: present
+
+- name: Install mysqld
+  yum:
+    name: "{{ item }}"
+    enablerepo: mysql56-community
+    disablerepo: mysql57-community
+    state: present
+  with_items:
+    - mysql-community-server
+    - mysql-community-client
+    - mysql-community-common
+    - mysql-community-libs
+    - mysql-community-libs-compat
+
+- name: Copy a my.cnf
+  copy:
+    src: my.cnf
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: 0600
+
+- name: create directory
+  file:
+    path: /var/log/mysql
+    state: directory
+    owner: root
+    mode: 0755
+
+- name: Start and auto start the mysqld
+  service:
+    name=mysqld
+    state=started
+    enabled=yes
+
+- name: Install the Python package of MySQL for Ansible
+  yum:
+    name: MySQL-python
+    state: present
+
+- name: root ユーザ接続設定ファイル作成
+  template:
+    src: .my.cnf.j2
+    dest: "{{ mysqld_5_6.defaults_file }}"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Confirm init of MySQL
+  shell: "mysqladmin --defaults-file={{ mysqld_5_6.defaults_file}} ping | grep alive"
+  ignore_errors: true
+  register: init_flag
+
+- name: Copy a octo SQL file
+  copy:
+    src: octo.sql
+    dest: /tmp/octo.sql
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Add mysql user for octo
+  mysql_user:
+    host: "{{ item }}"
+    name: octo
+    password: hilo
+    priv: 'octo.*:ALL,GRANT'
+    state: present
+  with_items:
+    - "{{ mysqld_5_6.server_range }}"
+    
+- name: yum-cron stop
+  service: 
+    name=yum-cron
+    state=stopped
+    enabled=no

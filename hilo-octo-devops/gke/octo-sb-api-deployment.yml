@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: octo-sb-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: sb-api
+  template:
+    metadata:
+      labels:
+        name: sb-api
+        deploy-date: ${DEPLOY_DATE}
+    spec:
+      containers:
+      - name: sb-api
+        image: asia.gcr.io/hilo-1047/octo-api:${VERSION}
+        resources:
+          requests:
+            cpu: 200m
+        volumeMounts:
+        - mountPath: /octo/etc
+          name: config
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      volumes:
+        - name: config
+          configMap:
+            name: octo-config
+  revisionHistoryLimit: 100

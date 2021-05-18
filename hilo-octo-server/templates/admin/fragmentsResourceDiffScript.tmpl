@@ -1,0 +1,26 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/mdl-jquery-modal-dialog.css">
+<script src="/static/js/mdl-jquery-modal-dialog.js"></script>
+<script src="/static/js/dialog.js"></script>
+<script src="/static/js/select-util.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    var dialog = document.querySelector('dialog');
+    if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+    $('dialog .close').click(function() {
+        dialog.close();
+    });
+    $('button.diff').each(function() {
+        var showDialogButton = $(this);
+        showDialogButton.click(function() {
+            $('dialog iframe').remove();
+            $('dialog').prepend('<iframe width="1000" height="90%" src="/a/{{.app.AppId}}/v/{{.version.VersionId}}/resourceDiff/' + showDialogButton.attr('data-octo-fileId') + '?targetAppVersionId={{.targetAppVersionIdParam}}"/>');
+            dialog.showModal();
+        });
+    });
+}());
+</script>

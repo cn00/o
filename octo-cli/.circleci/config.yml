@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/QualiArts/hilo-octo-cli
+    docker:
+    - image: circleci/golang:1.14.2
+    steps:
+    - run: echo $GOPATH
+    - run: echo 'export GOBIN=${GOPATH}/bin'  >> $BASH_ENV
+    - run: echo 'export PATH=${GOPATH}/bin/:${PATH}' >> $BASH_ENV
+    - checkout
+    - add_ssh_keys:
+        fingerprints:
+          - "86:60:0e:6f:dc:c6:ca:8b:52:09:6f:72:ba:98:a6:70"
+    - run:
+        name: download deps
+        command: make deps
+    - run:
+        name: test
+        command: cd src/octo-cli && go test -short
+    - run:
+        name: build
+        command: make build
+    - run:
+        name: zip octo-cli
+        command: zip -j octo-cli.zip /go/src/github.com/QualiArts/hilo-octo-cli/bin/*
+        working_directory: ./octo
+    - store_artifacts:
+        path: ./octo/octo-cli.zip
+        destination: octo-cli.zip

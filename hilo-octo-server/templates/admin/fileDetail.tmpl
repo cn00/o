@@ -1,0 +1,128 @@
+{{template "header" .}}
+
+<main class="mdl-layout__content center">
+    <div class="mdl-grid">
+        <h4> {{ .app.AppName }} {{.version.Description}} </h4>
+    </div>
+
+    <div class="mdl-grid">
+        <div class="page-content">
+
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                <tr>
+                    <th class="">AssetName</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Filename}}</td>
+                </tr>
+                <tr>
+                    <th>ID</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Id}}</td>
+                </tr>
+                <tr>
+                    <th>revision</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.RevisionId}}</td>
+                </tr>
+                <tr>
+                    <th class="">url</th>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        {{.fileUrl.Url}}
+                    </td>
+                </tr>
+                <tr>
+                    <th>size</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Size}}</td>
+                </tr>
+                <tr>
+                    <th>crc</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Crc}}</td>
+                </tr>
+                <tr>
+                    <th>MD5</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Md5.String}}</td>
+                </tr>
+                <tr>
+                    <th>Assets</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{ template "fragmentsAssets.tmpl" .file }}</td>
+                </tr>
+                <tr>
+                    <th class="">dependency</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.Dependency.String}}</td>
+                </tr>
+                <tr>
+                    <th class="">tag</th>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" id="tag" value="{{.file.Tag.String}}">
+                            <label class="mdl-textfield__label" for="tag">Comma Delimited Text...</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>BuildNumber</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{ .file.BuildNumber.String }}</td>
+                </tr>
+                <tr>
+                    <th class="">datetime</th>
+                    <td class="mdl-data-table__cell--non-numeric">{{.file.UpdDatetime.Format "2006-01-02 15:04:05"}}</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <div class="mdl-grid">
+        <button id="back" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+           <i class="material-icons">arrow_back</i> Back
+        </button>
+        {{ if ne .file.State 4 }}
+        {{ if .updaterFlg }}
+        &nbsp;
+        <button id="edit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+            <i class="material-icons">save</i> Edit
+        </button>
+        {{ end }}
+        {{ if .adminFlg }}
+        &nbsp;
+        <button id="delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            <i class="material-icons">delete</i> Delete
+        </button>
+        {{ end }}
+        {{ end }}
+
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready( function() {
+        $("#back").click(function(){
+            window.location.href='/a/{{ .file.AppId }}/v/{{.file.VersionId}}/file'
+        });
+        $("#edit").click(function(){
+            var tagParam = $("#tag").val();
+            $.ajax({
+                url: "/a/{{.file.AppId}}/v/{{.file.VersionId}}/file/{{.file.Id}}/update",
+                type:'POST',
+                dataType: 'json',
+                data : {tag : tagParam },
+                success: function(data) {
+                        alert("ok");
+                        window.location.href = "/a/{{.file.AppId}}/v/{{.file.VersionId}}/file/{{.file.Id}}/detail"
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                             alert("error");
+                       }
+              });
+        });
+        $("#delete").click(function(){
+            if(confirm('Are sure want to delete record?')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/a/{{.file.AppId}}/v/{{.file.VersionId}}/file/{{.file.Id}}/delete",
+                    success: function(msg){
+                        window.location.href = "/a/{{.file.AppId}}/v/{{.file.VersionId}}/file/{{.file.Id}}/detail"
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+{{template "footer" .}}

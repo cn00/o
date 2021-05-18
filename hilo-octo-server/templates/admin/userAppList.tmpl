@@ -1,0 +1,71 @@
+{{template "header" .}}
+
+    <main class="mdl-layout__content center">
+        <div class="mdl-grid">
+            {{ if eq .appId 0 }}
+            <h4>Admin </h4>
+            {{ else }}
+            <h4>{{.app.AppName}} </h4>
+            {{ end }}
+        </div>
+
+        {{ if .adminFlg }}
+        <div class="mdl-grid">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised" onclick="location.href='/a/{{.appId}}/userapp/add'">
+                <i class="material-icons">add</i> ADD USER
+            </button>
+        </div>
+        {{ end }}
+
+        <div class="mdl-grid">
+        <div class="page-content">
+
+            <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+                <thead>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">UserId</th>
+                    <th class="mdl-data-table__cell--non-numeric">Role</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .pagination.ShowList }}
+                 <tr>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        {{.UserId}}
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        {{ if eq .RoleType 1 }}
+                        USER
+                        {{ else if eq .RoleType 2 }}
+                        ADMIN
+                        {{ else if eq .RoleType 3 }}
+                        READER
+                        {{ end }}
+                    </td>
+                    <td style="padding-top: 5px;">
+                        {{ if $.adminFlg }}
+                        <form  method="POST" action="/a/{{.AppId}}/userapp/delete">
+                            <input type="hidden" name="userId" value="{{.UserId}}">
+                            <button class="mdl-button mdl-js-button mdl-button--icon" type="submit" onclick='return confirm("delete this?");'>
+                            <i class="material-icons">delete</i>
+                            </button>
+                        </form>
+                        {{ end }}
+                    </td>
+                </tr>
+                {{ end }}
+
+                </tbody>
+            </table>
+
+        </div>
+        </div>
+        <div class="mdl-grid">
+            <div class="pagination">
+                {{ template "fragmentsPagination.tmpl" . }}
+            </div>
+        </div>
+    </main>
+
+{{template "footer" .}}

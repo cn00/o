@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: octo-prd-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: prd-api
+  template:
+    metadata:
+      labels:
+        name: prd-api
+        deploy-date: ${DEPLOY_DATE}
+    spec:
+      containers:
+      - name: prd-api
+        image: asia.gcr.io/hilo-1047/octo-api:${VERSION}
+        resources:
+          requests:
+            cpu: 500m
+        volumeMounts:
+        - mountPath: /octo/etc
+          name: config
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      volumes:
+        - name: config
+          configMap:
+            name: octo-config
+  revisionHistoryLimit: 100

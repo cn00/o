@@ -1,0 +1,31 @@
+{{ if ne .pagination.CurrentPage 1 }}
+<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised" href="{{ .paginationBaseUrl }}page={{sub .pagination.CurrentPage 1}}"> &lt; </a>
+{{ end }}
+{{ if gt .pagination.CurrentPage 3 }}
+<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised" href="{{ .paginationBaseUrl }}page=1"> 1 </a>
+{{ end }}
+{{ if gt .pagination.CurrentPage 4 }}
+...
+{{ end }}
+{{ if ge (sub .pagination.CurrentPage  2) 1 }}
+<a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" href="{{ .paginationBaseUrl }}page={{ sub .pagination.CurrentPage 2}}">{{ sub .pagination.CurrentPage 2}}</a>
+{{ end }}
+{{ if ge (sub .pagination.CurrentPage  1) 1 }}
+<a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" href="{{ .paginationBaseUrl }}page={{ sub .pagination.CurrentPage 1}}">{{ sub .pagination.CurrentPage 1}}</a>
+{{ end }}
+<a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">{{ .pagination.CurrentPage }}</a>
+{{ if lt (add .pagination.CurrentPage  1) .pagination.MaxPage }}
+<a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" href="{{ .paginationBaseUrl }}page={{ add .pagination.CurrentPage 1}}">{{ add .pagination.CurrentPage 1}}</a>
+{{ end }}
+{{ if lt (add .pagination.CurrentPage  2)  .pagination.MaxPage }}
+<a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" href="{{ .paginationBaseUrl }}page={{ add .pagination.CurrentPage 2}}">{{ add .pagination.CurrentPage 2}}</a>
+{{ end }}
+{{ if lt .pagination.CurrentPage (sub .pagination.MaxPage 3) }}
+...
+{{ end }}
+{{ if lt .pagination.CurrentPage .pagination.MaxPage }}
+<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised" href="{{ .paginationBaseUrl }}page={{ .pagination.MaxPage }}"> {{ .pagination.MaxPage }} </a>
+{{ end }}
+{{ if ne .pagination.CurrentPage .pagination.MaxPage }}
+<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--raised" href="{{ .paginationBaseUrl }}page={{ add .pagination.CurrentPage 1 }}"> &gt; </a>
+{{ end }}

@@ -1,0 +1,169 @@
+{{template "header" .}}
+
+    <main class="mdl-layout__content">
+        <div class="center">
+            <div class="mdl-grid">
+                <div class="page-content">
+                    <h4>
+                        {{.app.AppName}}
+                        {{.version.Description}}
+                        <a href="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/detail" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                            <i class="material-icons">settings</i> Detail
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <div class="mdl-grid">
+                <div>
+                    <a href="/a/{{.appId}}/v/{{.versionId}}/resourceDiff" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                        <i class="material-icons">compare_arrows</i> Version Diff
+                    </a>
+                </div>
+            </div>
+            <div class="mdl-grid">
+                 <form action="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/resource">
+                    <div class="mdl-grid">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:200px;">
+                            <input class="mdl-textfield__input" type="text" id="search1" name="name" value="{{.nameParam}}">
+                            <label class="mdl-textfield__label" for="search1">File name...</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:200px;">
+                            <input class="mdl-textfield__input" type="text" id="search2" name="ids" value="{{.idsParam}}">
+                            <label class="mdl-textfield__label" for="search2">File ids, comma delimited...</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:200px;">
+                            <input class="mdl-textfield__input" type="text" id="search3" name="tag" value="{{.tagParam}}">
+                            <label class="mdl-textfield__label" for="search3">Tag name...</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:200px;">
+                            <input class="mdl-textfield__input" type="text" id="search4" name="revisionids" value="{{.revisionIdsParam}}">
+                            <label class="mdl-textfield__label" for="search4">Revision ids, comma delimited...</label>
+                        </div>
+                    </div>
+                    <div class="mdl-grid">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px;">
+                            <input class="mdl-textfield__input" type="text" id="search8" name="objectName" value="{{.objectNameParam}}">
+                            <label class="mdl-textfield__label" for="search7">Object Name...</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px;">
+                            <input class="mdl-textfield__input" type="text" id="search7" name="md5" value="{{.md5Param}}">
+                            <label class="mdl-textfield__label" for="search8">MD5...</label>
+                        </div>
+                    </div>
+                     <div class="mdl-grid">
+                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px;">
+                             <input class="mdl-textfield__input" type="text" id="search5" name="fromdate" value="{{.fromDateParam}}">
+                             <label class="mdl-textfield__label" for="search5">From Date... ex)2017-10-21 15:00:00</label>
+                         </div>
+                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:300px;">
+                             <input class="mdl-textfield__input" type="text" id="search6" name="todate" value="{{.toDateParam}}">
+                             <label class="mdl-textfield__label" for="search6">To Date... ex)2017-10-22 15:00:00</label>
+                         </div>
+                     </div>
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox" style="width:125px">
+                        <input type="checkbox" id="checkbox" class="mdl-checkbox__input" name="showdeleted" value="true" {{if .showDeleted}}checked{{end}}>
+                        <span class="mdl-checkbox__label">Show deleted</span>
+                    </label>
+                    <input type="hidden" name="_showdeleted" value="on">
+                    <input type="hidden" name="limit" value="{{ .limit }}">
+                    <button type="submit" class="mdl-button mdl-js-button mdl-js-ripple-effect">
+                        <i class="material-icons">search</i> Search
+                    </button>
+                </form>
+            </div>
+            <div class="mdl-grid">
+                <form action="/a/{{ .app.AppId }}/v/{{ .version.VersionId }}/resourceCsvOutput" name="csv">
+                    <input type="hidden" id="search1" name="name" value="{{.nameParam}}">
+                    <input type="hidden" id="search2" name="ids" value="{{.idsParam}}">
+                    <input type="hidden" id="search3" name="tag" value="{{.tagParam}}">
+                    <input type="hidden" id="search4" name="revisionids" value="{{.revisionIdsParam}}">
+                    <input type="hidden" id="search8" name="objectName" value="{{.objectNameParam}}">
+                    <input type="hidden" id="search7" name="md5" value="{{.md5Param}}">
+                    <input type="hidden" id="search5" name="fromdate" value="{{.fromDateParam}}">
+                    <input type="hidden" id="search6" name="todate" value="{{.toDateParam}}">
+                    <input type="hidden" id="checkbox" name="showdeleted" {{if .showDeleted}}value="true"{{end}}>
+                    <input type="hidden" name="_showdeleted" value="on">
+                    <input type="hidden" name="limit" value="{{ .limit }}">
+                    <button type="submit"  class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        <i class="material-icons">cloud_download</i> Csv
+                    </button>
+                </form>
+            </div>
+            <div class="mdl-grid">
+                <div class="mdl-layout-spacer"></div>
+                <div>
+                    <h5>Search Result Count :   {{ .pagination.ResultCount }}</h5>
+                    {{ if .adminFlg }}
+                    <button id="copy" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                        {{if not .version.CopyVersionId.Valid}}disabled{{end}}>
+                        <i class="material-icons">content_copy</i> Copy
+                    </button>
+                    <button id="delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        <i class="material-icons">delete</i> Delete
+                    </button>
+                    <button id="hard_delete" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        <i class="material-icons">delete_forever</i> HARD Delete
+                    </button>
+                    {{ end }}
+                </div>
+            </div>
+            <div class="mdl-grid">
+                <div class="page-content">
+
+                    <div class="mdl-layout__tab-bar mdl-js-ripple-effect" style="width:100%;height:48px;padding:0">
+                        <a href="/a/{{.app.AppId}}/v/{{.version.VersionId}}/file" class="mdl-layout__tab">AssetBundle</a>
+                        <a class="mdl-layout__tab is-active">Resources</a>
+                    </div>
+
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+                        <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">FileName</th>
+                            <th><i class="material-icons md-16">arrow_upward</i>ID</th>
+                            <th>revision</th>
+                            <th>size</th>
+                            <th>ObjectName</th>
+                            <th>MD5</th>
+                            <th class="mdl-data-table__cell--non-numeric">tag</th>
+                            <th class="mdl-data-table__cell--non-numeric">BuildNumber</th>
+                            <th class="mdl-data-table__cell--non-numeric">datetime</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ range .pagination.ShowList }}
+                        <tr data-octo-fileId="{{.Id}}" data-octo-filename="{{.Filename}}">
+                            <td class="mdl-data-table__cell--non-numeric name">
+                                <a href="/a/{{.AppId}}/v/{{.VersionId}}/resource/{{.Id}}/detail">{{.Filename}}</a>
+                            </td>
+                            <td class="id">{{.Id}}</td>
+                            <td>{{.RevisionId}}</td>
+                            <td>{{.Size}}</td>
+                            <td>{{.ObjectName.String}}</td>
+                            <td>{{.Md5.String}}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ template "fragmentsTag.tmpl" . }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ .BuildNumber.String }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{.UpdDatetime.Format "2006-01-02 15:04:05" }}</td>
+                        </tr>
+                        {{ end }}
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="mdl-grid">
+                <div class="pagination">
+                    {{ template "fragmentsPagination.tmpl" . }}
+                </div>
+            </div>
+        </div>
+    </main>
+    <form action="/a/{{.appId}}/v/{{.versionId}}/deleteSelectedResource" method="post" id="deleteForm">
+        <input type="hidden" id="deleteFileIds" name="fileids">
+        <input type="hidden" id="deleteIsHard" name="isHard">
+    </form>
+    <form action="/a/{{.appId}}/v/{{.versionId}}/copySelectedResource" method="post" id="copyForm">
+        <input type="hidden" id="copyFileIds" name="fileids">
+    </form>
+{{template "fragmentsResourceListScript.tmpl" .}}
+{{template "footer" .}}

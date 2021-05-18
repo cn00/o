@@ -1,0 +1,32 @@
+[admin]
+cookie_secret = "de3882f32adf68811d15b00051313bfb77e83ed7583a81d0036b2ebbe179e98f"
+port = 8080
+read_only = false
+env_check = true
+
+[database.master]
+addrs = "10.102.14.4:3306"
+dbname = "octo"
+user = "octo"
+password = "hilo"
+
+[database.slave]
+addrs = "10.102.14.15:3306,10.102.14.18:3306"
+dbname = "octo"
+user = "octo"
+password = "hilo"
+
+#[ldap]
+#url = "ldap://localhost:389/"
+#user_rdn = "uid"
+#email_rdn = "email"
+#base_dn = "ou=ND,dc=example,dc=co,dc=jp"
+
+[oauth_google]
+client_id = "TODO set client ID of Google API Credential"
+client_secret = "TODO set client secret of Google API Credential"
+redirect_url = "https://TODO set url/google/oauth"
+
+[gcs_project]
+project_id = "hilo-1047"
+location = "ASIA"
