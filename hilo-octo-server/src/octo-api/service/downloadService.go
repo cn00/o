@@ -11,7 +11,7 @@ import (
 	"octo/models"
 	"octo/utils"
 
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
 )

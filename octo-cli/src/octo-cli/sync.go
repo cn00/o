@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-cli/src/octo-cli/utils"
 )
 
 func diffSync(versionId int, sourceAppId int, sourceVersionId int, revisionId int) {

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-cli/src/octo-cli/utils"
 	"github.com/codegangsta/cli"
 	"os"
 
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/commands/copy"
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/commands/list"
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/config"
+	"hilo-octo-cli/src/octo-cli/commands/copy"
+	"hilo-octo-cli/src/octo-cli/commands/list"
+	"hilo-octo-cli/src/octo-cli/config"
 
 	"github.com/BurntSushi/toml"
 )

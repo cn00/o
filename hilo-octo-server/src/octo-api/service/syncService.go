@@ -2,7 +2,7 @@ package service
 
 import (
 	"database/sql"
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 	"log"
 	"octo/service/envservice"
 	"time"

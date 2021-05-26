@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-cli/src/octo-cli/utils"
 	"github.com/codegangsta/cli"
 	"testing"
 )
@@ -28,7 +28,7 @@ func TestMultiUploadAssetBundle(t *testing.T) {
 	utils.App = app
 	// TODO Set path AND VersionID
 	MultiUploadAssetBundle(9410,
-		"/Users/a12889/Dropbox/gopath/src/github.com/QualiArts/hilo-octo-unity-test/Assets/StreamingAssets/asset_bundle/a/v1/v1.manifest",
+		"/Users/a12889/Dropbox/gopath/src/hilo-octo-unity-test/Assets/StreamingAssets/asset_bundle/a/v1/v1.manifest",
 		[]string{"init", app.Version}, 0, false, app.Version, false, "", "")
 
 }
@@ -47,7 +47,7 @@ func TestMultiUploadAssetBundleWithCustomCors(t *testing.T) {
 	utils.App = app
 	// TODO Set path AND VersionID
 	MultiUploadAssetBundle(100010,
-		"/Users/a12889/Dropbox/gopath/src/github.com/QualiArts/hilo-octo-unity-test/Assets/StreamingAssets/asset_bundle/a/v1/v1.manifest",
+		"/Users/a12889/Dropbox/gopath/src/hilo-octo-unity-test/Assets/StreamingAssets/asset_bundle/a/v1/v1.manifest",
 		[]string{"init", app.Version}, 0, false, app.Version, true, `{"maxAge":60, "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "origins": ["*"], "responseHeaders":["X-Octo-Key"]}`, "")
 
 }
@@ -85,7 +85,7 @@ func TestMultiUploadOneAssetBundle(t *testing.T) {
 	utils.App = app
 	// TODO Set path AND VersionID
 	MultiUploadAssetBundle(9410,
-		"/Users/a12889/Dropbox/gopath/src/github.com/QualiArts/hilo-octo-unity-test/Assets/StreamingAssets/asset_bundle/a/v1/v1.manifest",
+		"/Users/a12889/Dropbox/gopath/src/hilo-octo-unity-test/Assets/StreamingAssets/asset_bundle/a/v1/v1.manifest",
 		[]string{"one", app.Version}, 0, false, app.Version, false, "", "qe21507132")
 }
 

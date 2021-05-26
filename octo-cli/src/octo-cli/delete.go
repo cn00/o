@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-cli/src/octo-cli/utils"
 
 	"github.com/codegangsta/cli"
 )

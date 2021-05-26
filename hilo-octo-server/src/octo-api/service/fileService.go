@@ -6,7 +6,7 @@ import (
 
 	"octo/models"
 
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 )
 
 var fileDao = models.NewFileDao()

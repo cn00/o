@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 	"time"
 
 	"database/sql"

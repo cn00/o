@@ -5,7 +5,7 @@ import (
 
 	"database/sql"
 
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 	"github.com/pkg/errors"
 )
 

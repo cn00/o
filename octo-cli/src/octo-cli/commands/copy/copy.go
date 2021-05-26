@@ -6,8 +6,8 @@ import (
 
 	"log"
 
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/config"
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-cli/src/octo-cli/config"
+	"hilo-octo-cli/src/octo-cli/utils"
 )
 
 type CopyOptions struct {

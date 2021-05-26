@@ -8,7 +8,7 @@ import (
 
 	"octo/utils"
 
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 	"github.com/pkg/errors"
 )
 

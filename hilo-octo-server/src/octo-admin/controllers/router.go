@@ -13,7 +13,7 @@ import (
 	"octo/controllers"
 	"octo/utils"
 
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-proto/go/octo"
 	"github.com/gin-gonic/gin"
 	"github.com/wataru420/contrib/sessions"
 )

@@ -1,5 +1,5 @@
-github.com/QualiArts/hilo-octo-proto v0.0.0-20180406064408-6d53f6caa07c h1:msEuSh6EA6olOd+I03KR212pHAjt1vVgHMnUGGIj4J0=
-github.com/QualiArts/hilo-octo-proto v0.0.0-20180406064408-6d53f6caa07c/go.mod h1:fyv9+cSZHM95XMXjGOgE2Wj1SP7vv0ajne3ogvK+7uc=
+
+
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

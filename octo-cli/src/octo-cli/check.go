@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-cli/src/octo-cli/utils"
 )
 
 func checkAssetBundleExistence(versionId int, files string) {

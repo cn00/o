@@ -6,15 +6,15 @@ env_check = false
 
 [database.master]
 addrs = "localhost:3306"
-dbname = "octo"
-user = "root"
-password = ""
+dbname = "dark_octo"
+user = "dark"
+password = "654123"
 
 [database.slave]
 addrs = "localhost:3306"
-dbname = "octo"
-user = "root"
-password = ""
+dbname = "dark_octo"
+user = "dark"
+password = "654123"
 
 #[ldap]
 #url = "ldap://localhost:389/"

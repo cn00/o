@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/QualiArts/hilo-octo-cli/src/octo-cli/utils"
-	"github.com/QualiArts/hilo-octo-proto/go/octo"
+	"hilo-octo-cli/src/octo-cli/utils"
+	"hilo-octo-proto/go/octo"
 	"github.com/codegangsta/cli"
 	"gopkg.in/matryer/try.v1"
 
