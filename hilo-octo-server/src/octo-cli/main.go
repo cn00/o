@@ -90,6 +90,47 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
+			Name:    "uploadOneAssetBundle",
+			Aliases: []string{"uab"},
+			Usage:   "upload one assetbundle which has diffrent crc.",
+
+			Flags: append([]cli.Flag{
+				cli.IntFlag{
+					Name:  "version, v",
+					Usage: "target asset versionId",
+				},
+				cli.StringSliceFlag{
+					Name:  "tags, t",
+					Usage: "add tags to assetbundle",
+				},
+				cli.IntFlag{
+					Name:  "priority, p",
+					Usage: "set priority to assetbundle",
+				},
+				cli.BoolFlag{
+					Name:  "useOldTag, u",
+					Usage: "add this flag if you don't want to update tags",
+				},
+				cli.StringFlag{
+					Name:  "manifest, m",
+					Usage: "Unity SingleManifestFile",
+				},
+				cli.StringFlag{
+					Name:  "buildNumber, bn",
+					Usage: "add build number to assetbundle",
+				},
+				cli.StringFlag{
+					Name:  "specificManifest, sm",
+					Usage: "Unity Specific ManifestFaile",
+				},
+			}, globalFlags...),
+			Before: before,
+			Action: func(c *cli.Context) {
+				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
+			},
+		},
+
+		{
 			Name:    "uploadAllAssetBundles",
 			Aliases: []string{"ua"},
 			Usage:   "upload all assetbundle which has diffrent crc.",
