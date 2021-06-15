@@ -1,6 +1,9 @@
 package service
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,9 +14,9 @@ import (
 	"octo/models"
 	"octo/utils"
 
-	"hilo-octo-proto/go/octo"
 	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
+	"hilo-octo-proto/go/octo"
 )
 
 var (
@@ -45,7 +48,7 @@ func (s *DownloadService) List(appId int, versionId int, revisionId int) ([]byte
 		return nil, err
 	}
 
-	cacheEnabled := listAPICacheEnabled(appId)
+	cacheEnabled := false ;// listAPICacheEnabled(appId)
 	if cacheEnabled {
 		if b, exist := listCache.ListGet(appId, versionId, revisionId, maxRevisionId); exist {
 			metrics.MemoryCacheHit.Add(1)
@@ -157,11 +160,14 @@ func (s *DownloadService) List(appId int, versionId int, revisionId int) ([]byte
 
 	Database.Revision = proto.Int(maxRevisionId)
 	Database.Tagname = tagNameList
-	Database.UrlFormat = proto.String(s.cdnUrl(appId) + "/" + bucket.BucketName + "-{v}-{type}/{o}?generation={g}&alt=media")
+	Database.UrlFormat = proto.String(s.cdnUrl(appId) + "/" + bucket.BucketName + "-{v}-{type}/{o}?generation={g}")
 	database, err := proto.Marshal(Database)
 	if err != nil {
 		return nil, errors.Wrap(err, "marshal error")
 	}
+
+	json, err := json.MarshalIndent(Database, "  ", "  ")
+	ioutil.WriteFile("database.json", json, os.ModePerm)
 
 	if cacheEnabled {
 		listCache.ListSet(appId, versionId, revisionId, maxRevisionId, database)

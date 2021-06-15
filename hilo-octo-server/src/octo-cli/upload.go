@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 
 	"io/ioutil"
 	"log"
@@ -70,6 +71,7 @@ func uploadAllAssetBundle(versionId int, manifestPath string, tags cli.StringSli
 	}
 
 	jsonBytes, err := json.Marshal(newFileList)
+	ioutil.WriteFile("uploadall.json", jsonBytes, oss.FilePermMode)
 	if err != nil {
 		panic(err)
 	}
@@ -143,8 +145,8 @@ func makeAssetBundleMap(abList *[]NewFile, visitedMap map[string]bool, gcs *Goog
 	serverFileCrc := uint32(serverFileDataM["CRC"].(float64))
 	if serverFileCrc != crc || octo.Data_State(serverFileDataM["State"].(float64)) == octo.Data_DELETE {
 		log.Println(name, "is changed.")
-		log.Println("old CRC is", serverFileCrc)
-		log.Println("new CRC is", crc)
+		log.Println("makeAssetBundleMap old CRC is", serverFileCrc)
+		log.Println("makeAssetBundleMap new CRC is", crc)
 
 		encryptedName := serverFileDataM["EncriptedName"].(string)
 		log.Println("encrypted name is", encryptedName)
@@ -295,12 +297,10 @@ func resourceMap(abList *[]NewFile, gcs *GoogleCloudStorage, fileMap map[string]
 	serverFileDataM := serverFileData.(map[string]interface{})
 	serverFileMD5 := serverFileDataM["MD5"].(string)
 	if serverFileMD5 != newFile.MD5 || octo.Data_State(serverFileDataM["State"].(float64)) == octo.Data_DELETE {
-		log.Println(fileInfo.Name, "is changed.")
-		log.Println("old MD5 is", serverFileMD5)
-		log.Println("new MD5 is", newFile.MD5)
-
 		encryptedName := serverFileDataM["EncriptedName"].(string)
-		log.Println("encrypted name is", encryptedName)
+		log.Println(fileInfo.Name, "is changed.")
+		log.Println("resourceMap oldMD5", serverFileMD5)
+		log.Println("resourceMap newMD5", newFile.MD5, fileInfo.Name, encryptedName, path)
 		err := uploadFile(gcs, path, encryptedName, newFile, abList)
 		if err != nil {
 			utils.Fatal(err)

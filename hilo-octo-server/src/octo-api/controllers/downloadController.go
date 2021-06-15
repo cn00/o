@@ -66,7 +66,7 @@ func ListEndpoint(c *gin.Context) {
 		return
 	}
 
-	// versionに暗号鍵が設定されている場合、平文APIを許可しない
+	// version中设置了密码密钥时，可以使用API不允许
 	if version.ApiAesKey != "" {
 		c.String(http.StatusBadRequest, "Must use encrypted API")
 		return

@@ -49,7 +49,7 @@ func DiffSyncEndpoint(c *gin.Context) {
 		return
 	}
 
-	// V1のDiffSyncは同じAppの間でSyncする想定なので、AppIdは同じものを指定する
+	// V1のDiffSync是一样的App之间Sync的设想AppId指定相同的
 	err = envService.CheckSameEnvironmentForSync(srcAppId, srcVersion, app.AppId, dstVersion, conf.Api.EnvCheck, true)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)

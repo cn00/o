@@ -94,15 +94,15 @@ func (s *FileService) HardDeleteSelectedFile(appId int, versionId int, fileIds [
 		fileIdsMap[id] = true
 	}
 
-	// 削除対象が削除しないAssetBundleに依存されていないかチェック
+	// 不删除删除对象AssetBundle检查是否依赖于
 	for _, f := range files {
 		file := f.(models.File)
 		if utils.IsDependent(fileIds, file.Id) {
-			// 削除対象なのでスルー
+			// 因为是删除对象，所以通过
 			continue
 		}
 		if !file.Dependency.Valid {
-			// 依存がないのでスルー
+			// 因为没有依赖，所以忽略
 			continue
 		}
 		deps, err := utils.SplitDependencies(file.Dependency.String)

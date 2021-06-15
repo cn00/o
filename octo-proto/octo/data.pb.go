@@ -65,7 +65,7 @@ func (x *Data_State) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// 単体のAssetBundle情報
+// 单体的AssetBundle情報
 type Data struct {
 	Id               *int32      `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
 	Filepath         *string     `protobuf:"bytes,2,opt,name=filepath" json:"filepath,omitempty"`

@@ -162,12 +162,16 @@ func (*AssetBundleService) uploadAll(app models.App, version int, json []NewFile
 			err = fmt.Errorf("File %v parseURLQuery Error: %v\n", file.Filename, err)
 			return 0, err
 		}
-		genInt, err := strconv.ParseUint(values.Get("generation"), 10, 64)
-		if err != nil {
-			err = fmt.Errorf("File %v ParseUint Error: %v\n", file.Filename, err)
-			return 0, err
+		
+		gen := values.Get("generation")
+		if len(gen) > 0 {
+			genInt, err := strconv.ParseUint(values.Get("generation"), 10, 64)
+			if err != nil {
+				err = fmt.Errorf("File %v ParseUint Error: %v\n", file.Filename, err)
+				return 0, err
+			}
+			file.Generation.Int64 = int64(genInt)
 		}
-		file.Generation.Int64 = int64(genInt)
 
 		file.Size = int(newFile.Size)
 		file.Crc = newFile.Crc
@@ -204,6 +208,9 @@ func (*AssetBundleService) uploadAll(app models.App, version int, json []NewFile
 			}
 		}
 		file.Dependency = sql.NullString{String: strings.Join(dependencyIds, ","), Valid: true}
+		//if (len(dependencyIds) > 0) {
+		//	log.Println("dependencyIds:", file.Filename, file.Dependency.String)
+		//}
 
 		file, err = fileDao.Replace(file, useOldTagFlg, tx)
 		if err != nil {

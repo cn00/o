@@ -49,7 +49,7 @@ func NewFileCopyService() *FileCopyService {
 func (s *FileCopyService) CopySelectedFile(o CopySelectedFileOptions, envCheck bool) (map[string]string, error) {
 	log.Printf("[INFO] CopySelectedFile options: %+v\n", o)
 
-	// コピー元が１つも選択されていない場合
+	// 没有选择一个副本的情况
 	if len(o.Filenames) == 0 {
 		return nil, errors.New("Please select copy source")
 	}
@@ -66,7 +66,7 @@ func (s *FileCopyService) CopySelectedFile(o CopySelectedFileOptions, envCheck b
 		return nil, err
 	}
 
-	// ドライランfalse(＝実際にコピーする)の場合
+	// 德莱兰false(=实际复制)的情况
 	if !o.DryRun {
 		srcVersion, err := s.versionDao.Get(o.AppId, o.SourceVersionId)
 		if err != nil {
@@ -80,8 +80,8 @@ func (s *FileCopyService) CopySelectedFile(o CopySelectedFileOptions, envCheck b
 				return nil, errors.Wrap(err, "get same env")
 			}
 
-			// dstのEnvIdがある場合はEnvIdもCopy、dstになければsrcのenvId利用
-			// Copy先のversionが存在しなければ、EnvIdも入れて作成
+			// dstのEnvId的情况下EnvIdもCopy、dst如果没有srcのenvId利用
+			// Copy前面的version如果不存在EnvId也创建
 			if dstEnv.EnvId > 0 {
 				if err := s.versionDao.AddVersionWithEnvId(destAppId, o.DestinationVersionId, dstEnv.EnvId); err != nil {
 					return nil, errors.Wrap(err, "failed to add version")
@@ -92,7 +92,7 @@ func (s *FileCopyService) CopySelectedFile(o CopySelectedFileOptions, envCheck b
 				}
 			}
 		} else {
-			// Copy先のversionが存在しない場合Version作成（EnvIdなし）
+			// Copy前面的version不存在时Version作成（EnvId无）
 			if err := s.versionDao.AddVersion(destAppId, o.DestinationVersionId); err != nil {
 				return nil, errors.Wrap(err, "failed to add version")
 			}
@@ -126,7 +126,7 @@ func (s *FileCopyService) copySelectedFile(o CopySelectedFileOptions, tx *sql.Tx
 	}
 
 	var newRevision int
-	// ドライランfalse(＝実際にコピーする)の場合
+	// 德莱兰false(=实际复制)的情况
 	if !o.DryRun {
 		var err error
 		newRevision, err = s.versionDao.IncrementMaxRevision(destAppId, o.DestinationVersionId, tx)
@@ -200,7 +200,7 @@ func (s *FileCopyService) copyAppOneFile(file models.File, targetAppId int, targ
 		if err != nil {
 			return err
 		}
-		newDeps := make([]int, 0, len(ids)) // copy時にIDが変わる可能性があるため、コピー後の依存情報を作り直す
+		newDeps := make([]int, 0, len(ids)) // copy有时ID因为有改变的可能性，所以重新制作复制后的依赖信息
 		for _, id := range ids {
 			dfile, err := s.adminFileDao.GetById(file.AppId, file.VersionId, id)
 			if err != nil {
@@ -218,7 +218,7 @@ func (s *FileCopyService) copyAppOneFile(file models.File, targetAppId int, targ
 		file.Dependency.String = utils.JoinDependencies(newDeps)
 	}
 
-	// 実際にコピーする場合
+	// 实际复制时
 	var copyID int
 	if !dryRun {
 		f := file
@@ -232,7 +232,7 @@ func (s *FileCopyService) copyAppOneFile(file models.File, targetAppId int, targ
 		}
 
 		if tfile.Id > 0 || (targetIdFile == models.File{}) {
-			// コピー先に既に同名アセットが存在するか、コピー先で同じIDが使われていない場合は同じIDを使う
+			// 复制目标已经存在同名资产，或复制目标相同ID没有使用的情况下相同ID使用
 			if tfile.Id > 0 {
 				f.Id = tfile.Id
 			}

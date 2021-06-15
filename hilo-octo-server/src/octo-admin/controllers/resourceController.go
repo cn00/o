@@ -559,7 +559,7 @@ func resourceCsvOutputEndpoint(c *gin.Context) {
 		return false
 	}()
 
-	// GetListする際のダミー値、fileListは全件取得される
+	// GetList假值fileList全部取得
 	page := 1
 	limit := 100
 
@@ -628,7 +628,7 @@ func resourceDiffCsvOutputEndpoint(c *gin.Context) {
 		return true
 	}()
 
-	// GetDiffする際のダミー値、fileListは全件取得される
+	// GetDiff假值fileList全部取得
 	page := 1
 	limit := 100
 

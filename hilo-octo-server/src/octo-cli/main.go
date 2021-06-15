@@ -93,7 +93,9 @@ func main() {
 			Name:    "uploadOneAssetBundle",
 			Aliases: []string{"uab"},
 			Usage:   "upload one assetbundle which has diffrent crc.",
-
+			Action: func(c *cli.Context) {
+				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
+			},
 			Flags: append([]cli.Flag{
 				cli.IntFlag{
 					Name:  "version, v",
@@ -125,15 +127,16 @@ func main() {
 				},
 			}, globalFlags...),
 			Before: before,
-			Action: func(c *cli.Context) {
-				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
-			},
 		},
 
 		{
 			Name:    "uploadAllAssetBundles",
 			Aliases: []string{"ua"},
 			Usage:   "upload all assetbundle which has diffrent crc.",
+			Before: before,
+			Action: func(c *cli.Context) {
+				MultiUploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
+			},
 
 			Flags: append([]cli.Flag{
 				cli.IntFlag{
@@ -165,15 +168,17 @@ func main() {
 					Usage: "Unity Specific ManifestFaile",
 				},
 			}, globalFlags...),
-			Before: before,
-			Action: func(c *cli.Context) {
-				MultiUploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
-			},
 		},
 		{
 			Name:    "uploadAllResources",
 			Aliases: []string{"uar"},
 			Usage:   "upload all resources which has diffrent md5 in your specific directory.",
+			Before: before,
+			Action: func(c *cli.Context) {
+				MultiUploadResources(c.Int("version"), c.String("basedir"), c.StringSlice("tags"),
+					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"),
+					c.String("corsStr"), c.Bool("cors"), c.Bool("recursion"), c.String("specificFilePath"))
+			},
 
 			Flags: append([]cli.Flag{
 				cli.IntFlag{
@@ -209,12 +214,6 @@ func main() {
 					Usage: "set filepath for specific file",
 				},
 			}, globalFlags...),
-			Before: before,
-			Action: func(c *cli.Context) {
-				MultiUploadResources(c.Int("version"), c.String("basedir"), c.StringSlice("tags"),
-					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"),
-					c.String("corsStr"), c.Bool("cors"), c.Bool("recursion"), c.String("specificFilePath"))
-			},
 		},
 		{
 			Name:    "addTagToAssetBundles",
@@ -500,7 +499,7 @@ type StdOutTest struct {
 
 func before(c *cli.Context) error {
 	decodeTomle(c.String("config"))
-	utils.AppSecret = c.String("secret")
+	utils.AppSecret = Conf.App.Secret // c.String("secret")
 	return nil
 }
 

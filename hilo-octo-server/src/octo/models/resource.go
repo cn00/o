@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	"hilo-octo-proto/go/octo"
 	"github.com/pkg/errors"
+	"hilo-octo-proto/go/octo"
 )
 
 type Resource struct {

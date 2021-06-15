@@ -3,9 +3,11 @@ package controllers
 import (
 	"crypto/sha256"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
 	"octo/models"
 	"octo/utils"
+	"os"
 	"strconv"
 )
 
@@ -44,7 +46,7 @@ func EncryptedListEndpoint(c *gin.Context) {
 		return
 	}
 
-	// versionに暗号鍵が設定されていない場合、暗号化APIは使えない
+	// version中未设置密码密钥时，将加密API不能使用
 	if version.ApiAesKey == "" {
 		c.String(http.StatusBadRequest, "Doesn't support encrypt")
 	}
@@ -54,13 +56,17 @@ func EncryptedListEndpoint(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+	ioutil.WriteFile("database.protobuf.bin", database, os.ModePerm)
 
 	key := sha256.Sum256([]byte(version.ApiAesKey))
-	cipherDatabase, err := utils.EncryptAes256(database, key)
+	cipherDatabase, err := utils.EncryptAes256((database), key)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+	cipherDatabase = database // 不加密
+	
+	ioutil.WriteFile("database.protobuf.aes256.bin", cipherDatabase, os.ModePerm)
 
 	c.Header("Etag", etag)
 	if edgeCacheOK {

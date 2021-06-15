@@ -10,9 +10,9 @@ import (
 
 func TestEnvDaoImpl_Insert(t *testing.T) {
 	SetupEnvTest()
-	// InsertするObjectを生成しておく
+	// Insert做，做Object预先生成
 	var insEnv = Env{1,1,"iOS", sql.NullString{String:"iOS2",Valid:true}, }
-	// 上記で生成したobjectをInsertの結果として返すように
+	// 上述生成的objectをInsert作为结果归还
 	dbmMock.ExpectExec("INSERT INTO envs").WithArgs(1,"iOS","iOS2").
 		WillReturnResult(sqlmock.NewResult(1,1))
 
@@ -28,11 +28,11 @@ func TestEnvDaoImpl_Insert(t *testing.T) {
 
 func TestEnvDao_GetList(t *testing.T) {
 	SetupEnvTest()
-	// Rowsを作成しておく
+	// Rows预先创建
 	rows := sqlmock.NewRows([]string{"app_id", "env_id", "name", "detail"}).
 		AddRow(1, 1, "Test", "Test").
 		AddRow(1, 2, "Test2", "Test2")
-	// Selectで作成したRowが返す用に設定
+	// Select创建的Row返回设置
 	dbsMock.ExpectQuery("^SELECT (.+) FROM envs").WillReturnRows(rows)
 
 	envDao := NewEnvDao()

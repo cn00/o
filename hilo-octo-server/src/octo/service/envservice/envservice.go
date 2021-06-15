@@ -140,7 +140,7 @@ func (e EnvServiceImpl) GetSameEnv(srcAppId, dstAppId, srcVersionId int) (models
 	if err != nil {
 		return models.Env{}, err
 	}
-	// 元のAPPのEnv名で先のAPPのEnv名を探す
+	// 原来的APPのEnv名先的APPのEnv寻找名字
 	dstEnv, err := e.GetEnvByName(dstAppId, srcEnv.Name)
 	if err != nil {
 		return models.Env{}, err

@@ -58,7 +58,7 @@ func init() {
 			conn, err := net.DialTimeout("tcp", addr, tcpmultiDialTimeout)
 			lastErr = err
 			if err == nil {
-				log.Println("[INFO] tcpmulti: connected:", addr)
+				//log.Println("[INFO] tcpmulti: connected:", addr, conn)
 				return conn, nil
 			}
 		}
@@ -115,7 +115,7 @@ func Setup(config Config) error {
 	return nil
 }
 
-// テスト用setup ここでmock用のDBを生成する
+// 测试用setup 在这里mock用的DB生成文件
 func SetupEnvTest() {
 	var err error
 
@@ -130,14 +130,14 @@ func setupMock() (sqlmock.Sqlmock, sqlmock.Sqlmock, error) {
 	var dbsMock sqlmock.Sqlmock
 	var err error
 	if !readOnly {
-		// DBはmockのDB Objectを返すように
+		// DBはmockのDB Object像是归还
 		dbm, dbmMock, err = sqlmock.New()
 		if err != nil {
 			return nil, nil, err
 		}
 	}
 	{
-		// DBはmockのDB Objectを返すように
+		// DBはmockのDB Object像是归还
 		dbs, dbsMock, err = sqlmock.New()
 		if err != nil {
 			return nil, nil, err

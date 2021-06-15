@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v2.4.1-0.20151222215319-2240de772c17+incompatible
@@ -21,6 +22,7 @@ require (
 	github.com/manucorporat/stats v0.0.0-20150531204625-8f2d6ace262e
 	github.com/mattn/go-colorable v0.0.0-20150625154642-40e4aedc8fab
 	github.com/mattn/go-isatty v0.0.12
+	github.com/mattn/go-sqlite3 v1.14.7 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/stretchr/objx v0.1.2-0.20180129172003-8a3f7159479f
@@ -36,11 +38,11 @@ require (
 	gopkg.in/bluesuncorp/validator.v5 v5.10.4-0.20150804013332-98121ac23ff3
 	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/yaml.v2 v2.2.8
-	octo-cli v0.0.0-00010101000000-000000000000
 	hilo-octo-proto v0.0.0-00010101000000-000000000000
 	octo v0.0.0-00010101000000-000000000000
 	octo-admin v0.0.0-00010101000000-000000000000 // indirect
 	octo-api v0.0.0-00010101000000-000000000000
+	octo-cli v0.0.0-00010101000000-000000000000
 )
 
 replace octo => ./src/octo

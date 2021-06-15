@@ -1,6 +1,6 @@
 [admin]
 cookie_secret = "c68ae00849bdbbf2f85f97345e9cd852c324b3a2c64e112759affd9bdda806bd"
-port = 8081
+port = 8881
 read_only = false
 env_check = false
 
@@ -16,16 +16,16 @@ dbname = "dark_octo"
 user = "dark"
 password = "654123"
 
-#[ldap]
-#url = "ldap://localhost:389/"
-#user_rdn = "uid"
-#email_rdn = "email"
-#base_dn = "ou=ND,dc=example,dc=co,dc=jp"
+[ldap]
+url = "ldap://localhost:389/"
+user_rdn = "uid"
+email_rdn = "email"
+base_dn = "ou=ND,dc=example,dc=co,dc=jp"
 
-[oauth_google]
-client_id = "yourClientId"
-client_secret = "yourClientSecret"
-redirect_url = "http://localhost:8081/google/oauth"
+# [oauth_google]
+# client_id = "yourClientId"
+# client_secret = "yourClientSecret"
+# redirect_url = "http://localhost:8081/google/oauth"
 
 [gcs_project]
 project_id = "your GCP ProjectID"

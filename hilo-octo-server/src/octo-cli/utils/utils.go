@@ -32,7 +32,7 @@ var (
 )
 
 func HttpGet(url string, v interface{}) error {
-	// client do error 対策 getのみ
+	// client do error 対策 get仅
 	http.DefaultTransport.(*http.Transport).DisableKeepAlives = true
 	var err error
 	retry(func() bool {
@@ -43,8 +43,13 @@ func HttpGet(url string, v interface{}) error {
 }
 
 func HttpPost(url string, body []byte, v interface{}) error {
-	http.DefaultTransport.(*http.Transport).DisableKeepAlives = false
-	return httpPost(url, body, v) // POST失敗時はサーバーの処理の成否がわからないので、リトライしない
+	var err error
+	retry(func() bool {
+		http.DefaultTransport.(*http.Transport).DisableKeepAlives = false
+		err = httpPost(url, body, v) // POST失败时不知道服务器的处理是否成功，所以不重试
+		return tryAgain(err)
+	})
+	return err
 }
 
 func retry(f func() bool) {
@@ -92,7 +97,7 @@ func httpGet(url string, v interface{}) error {
 }
 
 func httpPost(url string, body []byte, v interface{}) error {
-	log.Println("[INFO] httpPost:", url)
+	log.Println("[INFO] httpPost:", url, len(body))
 	req, err := newRequest("POST", url, body)
 	if err != nil {
 		return errors.Wrap(err, "new request error")
@@ -119,9 +124,9 @@ func newRequest(method, url string, body []byte) (*http.Request, error) {
 		return nil, errors.Wrap(err, "new request error")
 	}
 
-	if AppSecret == "" {
-		return nil, errors.Errorf("invalid app secret: %v", AppSecret)
-	}
+	//if AppSecret == "" {
+	//	return nil, errors.Errorf("invalid app secret: %v", AppSecret)
+	//}
 
 	req.Header.Set("X-Octo-Key", AppSecret)
 	req.Header.Set("X-Octo-Cli-Version", App.Version)
@@ -161,7 +166,7 @@ func readBody(r io.Reader, v interface{}) error {
 }
 
 func Fatal(err error) {
-	log.Fatalf("%+v\n", err)
+	log.Println("%+v\n", err)
 }
 
 func NewTabwriter() *tabwriter.Writer {

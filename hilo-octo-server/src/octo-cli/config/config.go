@@ -11,4 +11,5 @@ type ApiConfig struct {
 
 type AppConfig struct {
 	Id int `toml:"id"`
+	Secret string `toml:"secret"`
 }

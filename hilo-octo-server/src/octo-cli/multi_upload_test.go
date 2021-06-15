@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// TODO APIを立ち上げる必要がある。
+// TODO API有必要启动。
 func Setup() error {
 	decodeTomle("../../config.tml")
 	utils.AppSecret = "octo-app-secret"

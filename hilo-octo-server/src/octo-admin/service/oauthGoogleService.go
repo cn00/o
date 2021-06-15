@@ -33,18 +33,18 @@ func (*OauthGoogleService) LoginEndpoint(c *gin.Context) {
 }
 
 func (*OauthGoogleService) OauthEndpoint(c *gin.Context) {
-	//stateの値のチェック
+	//state检查值
 	state := c.Query("state")
 	log.Println(state)
 
-	//errorチェック
+	//error检查
 	apiError := c.Query("error")
 	if apiError != "" {
 		c.AbortWithError(http.StatusInternalServerError, errors.New(apiError))
 		return
 	}
 
-	//アクセストークン取得
+	//访问令牌获取
 	authcode := c.Query("code")
 
 	tok, err := oauthGoogleConfig.Exchange(oauth2.NoContext, authcode)
@@ -69,10 +69,10 @@ func (*OauthGoogleService) OauthEndpoint(c *gin.Context) {
 	json.Unmarshal(contents, &f)
 	m := f.(map[string]interface{})
 
-	//ユーザのプロフィール情報を取得
+	//获取用户简介信息
 	email := m["email"].(string)
 
-	//ユーザ登録等
+	//用户登录等
 	user, err := userDao.Get(email)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -89,7 +89,7 @@ func (*OauthGoogleService) OauthEndpoint(c *gin.Context) {
 		}
 	}
 
-	//sessionに格納してリダイレクト
+	//session保存并重定向
 	session := sessions.Default(c)
 	session.Set("id", email)
 	v := session.Get("fromUrl")

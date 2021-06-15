@@ -94,18 +94,18 @@ func (s *SyncService) diffSync(dstAppId int, dstVersionId int, srcAppId int, src
 
 func (*SyncService) diffSyncOneFile(dstAppId int, dstVersionId int, srcFile models.File, maxRevision int,
 	revisionId int, currentFileMap map[string]models.File, tx *sql.Tx) (models.File, error) {
-	// sync必要なし
+	// sync无需
 	if srcFile.RevisionId <= maxRevision {
 		return models.File{}, nil
 	}
 
 	dstFile, ok := currentFileMap[srcFile.Filename]
 	if !ok && srcFile.State == int(octo.Data_DELETE) {
-		// sync元がdeleteフラグが立っていてsync先に存在しないなら、事故防止のためsyncしない
+		// sync开元delete立着旗子sync如果不先存在的话，为了防止事故sync不做
 		return models.File{}, nil
 	}
 
-	//revisionよりしたのURL取得
+	//revision靠，靠URL取得
 	srcUrl, err := fileUrlDao.GetUrlByObjectNameAndRevisionIdLatest(srcFile.AppId, srcFile.VersionId,
 		srcFile.ObjectName.String, revisionId)
 	if err != nil {
@@ -150,7 +150,7 @@ func (*SyncService) diffSyncOneFile(dstAppId int, dstVersionId int, srcFile mode
 		},
 	})
 
-	//fileが存在していたら更新、なければ作成
+	//file更新，否则创建
 	if !ok {
 		//insert
 		dstFile = models.File{
@@ -204,18 +204,18 @@ func (*SyncService) diffSyncOneFile(dstAppId int, dstVersionId int, srcFile mode
 
 func (*SyncService) diffSyncOneResource(dstAppId int, dstVersionId int, srcResource models.Resource, maxRevision int,
 	revisionId int, dstCurrentResourceMap map[string]models.Resource, tx *sql.Tx) (models.Resource, error) {
-	// sync必要なし
+	// sync无需
 	if srcResource.RevisionId <= maxRevision {
 		return models.Resource{}, nil
 	}
 
 	dstFile, ok := dstCurrentResourceMap[srcResource.Filename]
 	if !ok && srcResource.State == int(octo.Data_DELETE) {
-		// sync元がdeleteフラグが立っていてsync先に存在しないなら、事故防止のためsyncしない
+		// sync开元delete立着旗子sync如果不先存在的话，为了防止事故sync不做
 		return models.Resource{}, nil
 	}
 
-	//revisionよりしたのURL取得
+	//revision靠，靠URL取得
 	srcUrl, err := resourceUrlDao.GetUrlByObjectNameAndRevisionIdLatest(srcResource.AppId, srcResource.VersionId, srcResource.ObjectName.String, revisionId)
 	if err != nil {
 		return models.Resource{}, errors.Wrap(err, "failed to get url")
@@ -338,7 +338,7 @@ func (*SyncService) diffSyncStart(dstAppId int, dstVersionId int, srcAppId int, 
 		return nil, nil, nil, nil, 0, errors.New("invalid source revisionId (not found)")
 	}
 
-	// Copy先のEnvを確認のためCopy先のVersionを取得
+	// Copy前面的Env为了确认Copy前面的Version正在获取
 	srcVersion, err := versionDao.Get(srcAppId, srcVersionId)
 	if err != nil {
 		return nil, nil, nil, nil, 0, errors.Wrap(err, "failed to get version")
@@ -351,8 +351,8 @@ func (*SyncService) diffSyncStart(dstAppId int, dstVersionId int, srcAppId int, 
 			return nil, nil, nil, nil, 0, errors.Wrap(err, "get same env")
 		}
 
-		// dstのEnvIdがある場合はEnvIdもCopy、dstになければsrcのenvId利用
-		// Copy先のversionが存在しなければ、EnvIdも入れて作成
+		// dstのEnvId的情况下EnvIdもCopy、dst如果没有srcのenvId利用
+		// Copy前面的version如果不存在EnvId也创建
 		if dstEnv.EnvId > 0 {
 			if err := versionDao.AddVersionWithEnvId(dstAppId, dstVersionId, dstEnv.EnvId); err != nil {
 				return nil, nil, nil, nil, 0, errors.Wrap(err, "failed to add version")
@@ -363,7 +363,7 @@ func (*SyncService) diffSyncStart(dstAppId int, dstVersionId int, srcAppId int, 
 			}
 		}
 	} else {
-		// Copy先のversionが存在しない場合Version作成（EnvIdなし）
+		// Copy前面的version不存在时Version作成（EnvId无）
 		if err := versionDao.AddVersion(dstAppId, dstVersionId); err != nil {
 			return nil, nil, nil, nil, 0, errors.Wrap(err, "failed to add version")
 		}

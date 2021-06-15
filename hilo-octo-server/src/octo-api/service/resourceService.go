@@ -129,7 +129,8 @@ func (*ResourceService) uploadAll(app models.App, version int, json []NewFile, u
 
 		genInt, err := strconv.ParseUint(values.Get("generation"), 10, 64)
 		if err != nil {
-			return 0, err
+			println("get generation err", err, file.Filename)
+			//return 0, err
 		}
 		file.Generation.Int64 = int64(genInt)
 

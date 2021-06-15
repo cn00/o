@@ -96,7 +96,7 @@ func versionUpdateEndpoint(c *gin.Context) {
 
 	copyAppIdForm := c.PostForm("copyAppId")
 
-	// TODO ENV管理機能を追加するまで臨時
+	// TODO ENV在追加管理功能之前
 	envIdForm := c.PostForm("envId")
 	var envId int
 	if len(envIdForm) > 0 {

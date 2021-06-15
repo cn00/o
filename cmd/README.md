@@ -19,6 +19,7 @@ $ gcloud auth activate-service-account [ACCOUNT] --key-file [your.json] --projec
 
 you need to change id of App and baseUrl of API on config.tml.
 * <b>Please contact to account manager of octo that about AppId and BaseUrl.</b>   
+
 ```
 [Api]
 base_url = "set octo api url"
@@ -36,39 +37,35 @@ id = you AppId
 $ bin/octo-cli [global options] command [command options] [arguments...]
 ```
 
-there have 7 command type
+### 7 command type
 
-```
-uploadAllAssetBundles, ua	upload all assetbundle which has diffrent crc.
-uploadAllResources, uar	upload all resources which has diffrent md5 in your specific directory.
-addTagToAssetBundles, ta	add tag to assetBundles.
-addTagToResources, tr	add tag to resources.
-removeTagFromAssetBundles, rta    remove tag from assetBundles.
-removeTagFromResources, rtr   remove tag from assetBundles.
-deleteAssetBundles, da	delete assetBundles.
-deleteResources, dr		delete resources.
-diffSync, ds			diff sync assetBundles and resources.
-diffSyncLatest, dsl		diff sync latest revision assetBundles and resources.
-checkAssetBundlesExistence, cae	check assetBundles existence.
-checkResouceExistence, cre		check resources existence.
-listAssetBundles, la  get assetbundle list.
-listResources, lr get resources list.
-help, h			Shows a list of commands or help for one command
-```
+- __uploadAllAssetBundles__, ua	upload all assetbundle which has diffrent crc.
+- __uploadAllResources__, uar	upload all resources which has diffrent md5 in your specific directory.
+- __addTagToAssetBundles__, ta	add tag to assetBundles.
+- __addTagToResources__, tr	add tag to resources.
+- __removeTagFromAssetBundles__, rta    remove tag from assetBundles.
+- __removeTagFromResources__, rtr   remove tag from assetBundles.
+- __deleteAssetBundles__, da	delete assetBundles.
+- __deleteResources__, dr		delete resources.
+- __diffSync__, ds			diff sync assetBundles and resources.
+- __diffSyncLatest__, dsl		diff sync latest revision assetBundles and resources.
+- __checkAssetBundlesExistence__, cae	check assetBundles existence.
+- __checkResouceExistence__, cre		check resources existence.
+- __listAssetBundles__, la  get assetbundle list.
+- __listResources__, lr get resources list.
+- __help__, h			Shows a list of commands or help for one command
 
-and 5 global options
+### 5 global options
 
-```
---secret, -s "xxxxx"		octo application secret [$OCTO_APP_SECRET]
---config, -c "config.tml"	Specify the location of the config file.
---cros, -cr		set cors for bucket
---corsStr, -crs "{\"maxAge\":60, \"methods\": [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\"], \"origins\": [\"*\"], \"responseHeaders\":[\"X-Octo-Key\"]}"
-" set custom cors. need to set cors  
---help, -h			show help
---generate-bash-completion
---version, -v		print the version
---recursion, -r     recursion subdir on dir
-```
+- --secret, -s "xxxxx"		octo application secret [$OCTO_APP_SECRET]
+- --config, -c "config.tml"	Specify the location of the config file.
+- --cros, -cr		set cors for bucket
+- --corsStr, -crs "{\"maxAge\":60, \"methods\": [\"GET\", \"POST\", \"PUT\", \"DELETE\", \"OPTIONS\"], \"origins\": [\"*\"], \"responseHeaders\":[\"X-Octo-Key\"]}"
+- " set custom cors. need to set cors  
+- --help, -h			show help
+- --generate-bash-completion
+- --version, -v		print the version
+- --recursion, -r     recursion subdir on dir
 
 secret can set by enciroment variables like
 

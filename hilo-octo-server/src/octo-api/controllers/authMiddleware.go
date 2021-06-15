@@ -21,10 +21,10 @@ func (m *AuthMiddleware) ClientAuthV1(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if (app == models.App{}) {
-		abortWithInvalidSecretKeyError(c)
-		return
-	}
+	//if (app == models.App{}) {
+	//	abortWithInvalidSecretKeyError(c)
+	//	return
+	//}
 	c.Set("app", app)
 }
 
@@ -34,10 +34,10 @@ func (m *AuthMiddleware) AppAuthV1(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if (app == models.App{}) {
-		abortWithInvalidSecretKeyError(c)
-		return
-	}
+	//if (app == models.App{}) {
+	//	abortWithInvalidSecretKeyError(c)
+	//	return
+	//}
 	c.Set("app", app)
 }
 
@@ -60,10 +60,10 @@ func (m *AuthMiddleware) AppAuthV2(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if (app == models.App{}) || !m.validateParamAppId(c, app) {
-		abortWithInvalidSecretKeyError(c)
-		return
-	}
+	//if (app == models.App{}) || !m.validateParamAppId(c, app) {
+	//	abortWithInvalidSecretKeyError(c)
+	//	return
+	//}
 	c.Set("app", app)
 }
 

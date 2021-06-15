@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -56,35 +55,35 @@ func GetDependencyList(manifestFile string, target string) []string {
 	return dependencyList
 }
 
-func DecodeBundleManifest(manifestFile string) SingleManifest {
-	buf, err := ioutil.ReadFile(manifestFile)
-	if err != nil {
-		log.Fatal(manifestFile + " can not open." + err.Error())
-		panic(err)
-	}
+func DecodeBundleManifest(manifestFile string) *SingleManifest {
+	manifest1 := DecodeManifest(manifestFile)
+	
+	//m := make(map[interface{}]interface{})
+	//err := yaml.Unmarshal(buf, &m)
+	//if err != nil {
+	//	panic(err)
+	//}
 
-	m := make(map[interface{}]interface{})
-	err = yaml.Unmarshal(buf, &m)
-	if err != nil {
-		panic(err)
-	}
-
-	manifest := SingleManifest{ManifestFileVersion: m["ManifestFileVersion"].(int)}
+	manifest := new(SingleManifest)
+	manifest.ManifestFileVersion = manifest1.ManifestFileVersion
 	var assetBundleMap = map[string]AssetBundleInfo{}
 	
 	assetName := manifestFile[strings.LastIndex(manifestFile,"/")+1:strings.LastIndex(manifestFile,".")]
-	var dependencyList = []string{}
-	for _, dependency := range m["Dependencies"].([]interface{}) {
-		depStr := typeCheck(dependency)
-		depStr = depStr[strings.LastIndex(depStr,"/")+1:]
-		dependencyList = append(dependencyList, depStr)
-	}
-	assetBundleMap[assetName] = AssetBundleInfo{Dependencies: dependencyList}
+	//crc := m["CRC"].(uint32)
+	//var dependencyList = []string{}
+	//for _, dependency := range m["Dependencies"].([]interface{}) {
+	//	depStr := typeCheck(dependency)
+	//	depStr = depStr[strings.LastIndex(depStr,"/")+1:]
+	//	dependencyList = append(dependencyList, depStr)
+	//}
+	assetBundleMap[assetName] = AssetBundleInfo{Dependencies: manifest1.Dependencies, CRC: manifest1.CRC}
 	manifest.AssetBundleManifest = assetBundleMap
 	
-	jsons, err := json.Marshal(dependencyList, )
-	println("DecodeBundleManifest", assetName, jsons)
-	return manifest
+	if len(manifest1.Dependencies) > 0 {
+		return manifest
+	} else {
+		return nil
+	}
 }
 
 func DecodeSingleManifest(manifestFile string) SingleManifest {
@@ -154,7 +153,9 @@ func DecodeManifest(manifestFile string) Manifest {
 
 	var dependencyList = []string{}
 	for _, dependency := range m["Dependencies"].([]interface{}) {
-		dependencyList = append(dependencyList, dependency.(string))
+		depStr := typeCheck(dependency)
+		//	depStr = depStr[strings.LastIndex(depStr,"/")+1:]
+		dependencyList = append(dependencyList, depStr[strings.LastIndex(depStr,"/")+1:])
 	}
 
 	manifest.Dependencies = dependencyList
