@@ -150,6 +150,8 @@ func DecodeManifest(manifestFile string) Manifest {
 		for _, asset := range ma.([]interface{}) {
 			assets = append(assets, asset.(string))
 		}
+	}else{
+		log.Println("Assets_nil", manifestFile)
 	}
 	manifest.Assets = assets
 
@@ -158,11 +160,15 @@ func DecodeManifest(manifestFile string) Manifest {
 	if ok {
 		for _, dependency := range md.([]interface{}) {
 			depStr := typeCheck(dependency)
+			depStr = depStr[strings.LastIndex(depStr,"/")+1:]
 			//	depStr = depStr[strings.LastIndex(depStr,"/")+1:]
-			dependencyList = append(dependencyList, depStr[strings.LastIndex(depStr,"/")+1:])
+			dependencyList = append(dependencyList, depStr)
 		}
+	}else{
+		log.Println("Dependencies_nil", manifestFile)
 	}
 	manifest.Dependencies = dependencyList
 
+	log.Println("Dependencies_len", len(dependencyList), "Assets_len", len(assets), manifestFile, strings.Join(dependencyList, "|"))
 	return manifest
 }

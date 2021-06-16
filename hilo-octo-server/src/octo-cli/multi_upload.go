@@ -115,6 +115,13 @@ const (
 //
 //)
 
+type  ServerFile struct{
+	id, app_id, version_id, revision_id, filename, 
+	object_name, url, size, crc, generation, md5, tag,
+	assets, dependency, priority, state, build_number, 
+	upload_versionid, upd_datetime string
+}
+
 type FileMap struct{
 	uploadedFileList    []NewFile
 
@@ -137,7 +144,7 @@ func doOneManifestfile(versionId int, manifestPath string, tags cli.StringSlice,
 	singleManifest := DecodeBundleManifest(manifestPath)
 	if singleManifest != nil {
 		//err := try.Do(func(attempt int) (retry bool, err error) {
-		fileMap := FileMap{}
+		var fileMap = FileMap{}
 		fileMap.option.tag = strings.Join(tags, ",")
 		fileMap.option.priority = priority
 		fileMap.option.buildNumber = buildNumber
@@ -150,20 +157,20 @@ func doOneManifestfile(versionId int, manifestPath string, tags cli.StringSlice,
 		fileMap.ErrorFileMap        = map[string]string{}
 		fileMap.option 				= UploadOption{}
 		
-			gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, fileMap)
+			gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, &fileMap)
 	
 			basePath := filepath.Dir(manifestPath)
 		
 			// 创建上传信息
-			createAssetBundleUploadInfo(*singleManifest, basePath, specificManifest, versionId, fileMap)
+			createAssetBundleUploadInfo(*singleManifest, basePath, specificManifest, versionId, &fileMap)
 		
 			depsChangedCount := len(fileMap.uploadedFileList)
 		
 			// GCPのGCS上传到
-			assetCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeAssetBundle, fileMap)
+			assetCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeAssetBundle, &fileMap)
 		
 			// 上传结果OCTO API发送到
-			endUpload(useOldTagFlg, versionId, AssetBundleUploadAllURLPath, fileMap)
+			endUpload(useOldTagFlg, versionId, AssetBundleUploadAllURLPath, &fileMap)
 		
 			elapsed := time.Since(start)
 			log.Printf("Uploaded AssetBundle count: %d, Deps changed count: %d, Elapsed Time: %f Seconds\n", assetCount, depsChangedCount, elapsed.Seconds())
@@ -182,7 +189,7 @@ func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice,
 	log.Println("UploadAssetBundle：", manifestPath)
 	mf, _ := os.Stat(manifestPath)
 	if mf.IsDir(){
-		ncpu := runtime.NumCPU()*10
+		ncpu := runtime.NumCPU()*3
 		log.Println("遍历文件夹：", manifestPath, "ncpu:", ncpu)
 		manifests, _ := ioutil.ReadDir(manifestPath)
 		//mms := linq.From(manifests).Where(func(i FileInfo) {strings.HasSuffix(i.Name(), ".manifest")})
@@ -259,21 +266,21 @@ func MultiUploadAssetBundle(versionId int, manifestPath string, tags cli.StringS
 	fileMap.ErrorFileMap        = map[string]string{}
 	fileMap.option 				= UploadOption{}
 
-	gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, fileMap)
+	gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, &fileMap)
 
 	singleManifest := DecodeSingleManifest(manifestPath)
 	basePath := filepath.Dir(manifestPath)
 
 	// 创建上传信息
-	createAssetBundleUploadInfo(singleManifest, basePath, specificManifest, versionId, fileMap)
+	createAssetBundleUploadInfo(singleManifest, basePath, specificManifest, versionId, &fileMap)
 
 	depsChangedCount := len(fileMap.uploadedFileList)
 
 	// GCPのGCS上传到
-	assetCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeAssetBundle, fileMap)
+	assetCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeAssetBundle, &fileMap)
 
 	// 上传结果OCTO API发送到
-	endUpload(useOldTagFlg, versionId, AssetBundleUploadAllURLPath,fileMap)
+	endUpload(useOldTagFlg, versionId, AssetBundleUploadAllURLPath, &fileMap)
 
 	elapsed := time.Since(start)
 	log.Printf("Uploaded AssetBundle count: %d, Deps changed count: %d, Elapsed Time: %f Seconds\n", assetCount, depsChangedCount, elapsed.Seconds())
@@ -312,27 +319,27 @@ func MultiUploadResources(versionId int, basePath string, tags cli.StringSlice, 
 	fileMap.ErrorFileMap        = map[string]string{}
 	fileMap.option 				= UploadOption{}
 
-	gcs, _ := prepareUpload(versionId, ResourcesListURLPath, cors, corsStr, UploadTypeResources, fileMap)
+	gcs, _ := prepareUpload(versionId, ResourcesListURLPath, cors, corsStr, UploadTypeResources, &fileMap)
 
 	//check directory
 	checkDir(basePath)
 
-	createResourceUploadInfo(basePath, versionId, recursion, fileMap)
+	createResourceUploadInfo(basePath, versionId, recursion, &fileMap)
 
 	// 想单独给的情况
 	if len(specificFilePath) > 0 {
-		multiUploadOneResource(versionId, tags, priority, useOldTagFlg, buildNumber, nil, start, specificFilePath, fileMap)
+		multiUploadOneResource(versionId, tags, priority, useOldTagFlg, buildNumber, nil, start, specificFilePath, &fileMap)
 		return
 	}
 
-	resourcesCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeResources, fileMap)
+	resourcesCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeResources, &fileMap)
 
 	if len(fileMap.uploadedFileList) == 0 {
 		log.Println("Nothing changed.")
 		return
 	}
 
-	endUpload(useOldTagFlg, versionId, ResourcesUploadAllURLPath, fileMap)
+	endUpload(useOldTagFlg, versionId, ResourcesUploadAllURLPath, &fileMap)
 
 	elapsed := time.Since(start)
 	log.Printf("Upload Resources count: %d, Elapsed Time: %f Seconds\n", resourcesCount, elapsed.Seconds())
@@ -340,7 +347,7 @@ func MultiUploadResources(versionId int, basePath string, tags cli.StringSlice, 
 	printErrorFile()
 }
 
-func createAssetBundleUploadInfo(singleManifest SingleManifest, basePath string, specificManifest string, versionId int, fileMap FileMap) {
+func createAssetBundleUploadInfo(singleManifest SingleManifest, basePath string, specificManifest string, versionId int, fileMap *FileMap) {
 	// 上传前start api，然后object map创建
 	var  uploadUrlVisitedMap = map[string]bool{}
 	createAssetBundleUploadStartFileMapAndObjectMap(uploadUrlVisitedMap,singleManifest, basePath, specificManifest, versionId, fileMap)
@@ -349,7 +356,7 @@ func createAssetBundleUploadInfo(singleManifest SingleManifest, basePath string,
 	}
 }
 
-func createResourceUploadInfo(basePath string, versionId int, recursion bool, fileMap FileMap) {
+func createResourceUploadInfo(basePath string, versionId int, recursion bool, fileMap *FileMap) {
 
 	pathMap := createResourcesUploadStartFileMap(basePath, versionId, recursion, fileMap)
 
@@ -377,7 +384,7 @@ func createResourceUploadInfo(basePath string, versionId int, recursion bool, fi
 	ioutil.WriteFile("planUploadFileMap.json", jsonbyte, os.ModePerm)
 }
 
-func prepareUpload(versionId int, listUrlString string, cors bool, corsStr, uploadType string, fileMap FileMap) (*GoogleCloudStorage, error) {
+func prepareUpload(versionId int, listUrlString string, cors bool, corsStr, uploadType string, fileMap *FileMap) (*GoogleCloudStorage, error) {
 
 	// 获取服务器上已有的文件列表
 	err := getListOnServer(versionId, listUrlString, fileMap)
@@ -386,12 +393,12 @@ func prepareUpload(versionId int, listUrlString string, cors bool, corsStr, uplo
 	}
 
 	// gcs上bucket创建和cors設定
-	//gcs := createBucket(versionId, cors, corsStr, uploadType, fileMap)
+	//gcs := createBucket(versionId, cors, corsStr, uploadType, &fileMap)
 	return nil, err
 }
 
 func multiUploadOneResource(versionId int, tags cli.StringSlice, priority int, useOldTagFlg bool, buildNumber string, 
-	gcs *GoogleCloudStorage, start time.Time, specificFilePath string, fileMap FileMap) {
+	gcs *GoogleCloudStorage, start time.Time, specificFilePath string, fileMap *FileMap) {
 
 	//check file
 	fileInfo := checkFile(specificFilePath)
@@ -400,7 +407,7 @@ func multiUploadOneResource(versionId int, tags cli.StringSlice, priority int, u
 
 	resourcesCount := 0 // startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeResources)
 
-	endUpload(useOldTagFlg, versionId, ResourcesUploadAllURLPath,fileMap)
+	endUpload(useOldTagFlg, versionId, ResourcesUploadAllURLPath, fileMap)
 
 	elapsed := time.Since(start)
 	log.Printf("Upload Resources count: %d, Elapsed Time: %f Seconds\n", resourcesCount, elapsed.Seconds())
@@ -408,7 +415,7 @@ func multiUploadOneResource(versionId int, tags cli.StringSlice, priority int, u
 	printErrorFile()
 }
 
-func createOneResourceUploadInfo(fileInfo FileInfo, versionId int, specificFilePath string, fileMap FileMap) {
+func createOneResourceUploadInfo(fileInfo FileInfo, versionId int, specificFilePath string, fileMap *FileMap) {
 	serverFileData := fileMap.fileMap[fileInfo.Name]
 	judgeNewOrUpdate(serverFileData, versionId, fileInfo.Name, specificFilePath, ResourcesUploadStartURLPath, UpdateJudgeStrMD5, nil, fileInfo, fileMap)
 	if serverFileData == nil {
@@ -419,7 +426,7 @@ func createOneResourceUploadInfo(fileInfo FileInfo, versionId int, specificFileP
 	}
 }
 
-func createUploadAssetBundle(manifest string, singleManifest SingleManifest, basePath string, fileMap FileMap) {
+func createUploadAssetBundle(manifest string, singleManifest SingleManifest, basePath string, fileMap *FileMap) {
 
 	ds := singleManifest.AssetBundleManifest[manifest].Dependencies
 
@@ -434,7 +441,7 @@ func createUploadAssetBundle(manifest string, singleManifest SingleManifest, bas
 	}
 }
 
-func checkUpdateAssetBundleFile(assetPath string, serverFileData interface{}, fileName string, dependency []string, fileMap FileMap) {
+func checkUpdateAssetBundleFile(assetPath string, serverFileData interface{}, fileName string, dependency []string, fileMap *FileMap) {
 	manifest := DecodeManifest(assetPath + ".manifest")
 	crc := manifest.CRC
 	serverFileDataM := serverFileData.(map[string]interface{})
@@ -449,7 +456,7 @@ func checkUpdateAssetBundleFile(assetPath string, serverFileData interface{}, fi
 	}
 }
 
-func checkUpdateResourceFile(assetPath string, serverFileData interface{},fileMap FileMap) {
+func checkUpdateResourceFile(assetPath string, serverFileData interface{},fileMap *FileMap) {
 	fileInfo, err := getFileInfo(assetPath)
 	if err != nil {
 	}
@@ -464,8 +471,9 @@ func checkUpdateResourceFile(assetPath string, serverFileData interface{},fileMa
 	}
 }
 
-func setUploadNewFileMap(filePath string, fileName string, objectName string, dependencies []string, fileMap FileMap) {
+func setUploadNewFileMap(filePath string, fileName string, objectName string, dependencies []string, fileMap *FileMap) {
 	if len(objectName) > 0 {
+		log.Println("setUploadNewFileMap", filePath, fileName, dependencies)
 		fileMap.planUploadFileMap[fileName] = GCSFile{
 			FilePath: filePath,
 			FileName: fileName,
@@ -478,7 +486,7 @@ func setUploadNewFileMap(filePath string, fileName string, objectName string, de
 }
 
 func startUploadToGCP(gcs *GoogleCloudStorage, priority int, tags cli.StringSlice, buildNumber, uploadType string, 
-	fileMap FileMap) int {
+	fileMap *FileMap) int {
 	var wg sync2.WaitGroup
 	ncpu := runtime.NumCPU()
 	sem := make(chan string, ncpu)
@@ -523,7 +531,7 @@ func startUploadToGCP(gcs *GoogleCloudStorage, priority int, tags cli.StringSlic
 
 }
 
-func createUploadedNewFileList(gcsFile GCSFile, priority int, tags cli.StringSlice, buildNumber, uploadType string, fileMap FileMap) {
+func createUploadedNewFileList(gcsFile GCSFile, priority int, tags cli.StringSlice, buildNumber, uploadType string, fileMap *FileMap) {
 	fileInfo, err := getFileInfo(gcsFile.FilePath)
 	if err != nil {
 		utils.Fatal(err)
@@ -609,7 +617,7 @@ func createNewFile(v2 GCSFile, priority int, tags cli.StringSlice, fileInfo File
 	return newFile
 }
 
-func endUpload(useOldTagFlg bool, versionId int, uploadUrlString string, fileMap FileMap) {
+func endUpload(useOldTagFlg bool, versionId int, uploadUrlString string, fileMap *FileMap) {
 	if len(fileMap.uploadedFileList) == 0 {
 		log.Println("Nothing changed.")
 		return
@@ -635,12 +643,10 @@ func endUpload(useOldTagFlg bool, versionId int, uploadUrlString string, fileMap
 		return
 	}
 	log.Println("Upload Complete. RevisionId:", res["RevisionId"])
-	fileMap.uploadedFileList  = []NewFile{}
-	//serverFileMap     = map[string]interface{}{}
 }
 
 func createAssetBundleUploadStartFileMapAndObjectMap(uploadUrlVisitedMap map[string]bool,singleManifest SingleManifest, 
-	basePath, specificManifest string, versionId int, fileMap FileMap) (SingleManifest, string) {
+	basePath, specificManifest string, versionId int, fileMap *FileMap) (SingleManifest, string) {
 
 	// SingleManifest中的文件名是否有半角空间
 	for name := range singleManifest.AssetBundleManifest {
@@ -671,11 +677,11 @@ func createAssetBundleUploadStartFileMapAndObjectMap(uploadUrlVisitedMap map[str
 }
 
 func judgeNewOrUpdate(serverFileData interface{}, versionId int, name, path, startUrlString, checkStr string, 
-dependencies []string, fileInfo FileInfo, fileMap FileMap) {
+dependencies []string, fileInfo FileInfo, fileMap *FileMap) {
 
 	if serverFileData == nil {
 		// new
-		log.Println("judgeNewOrUpdate_add_new", name)
+		log.Println("judgeNewOrUpdate_add_new", name, strings.Join(dependencies, "|"))
 
 		var fileStartMap map[string]interface{}
 
@@ -763,7 +769,7 @@ dependencies []string, fileInfo FileInfo, fileMap FileMap) {
 }
 
 func checkDependencyAssetBundle(uploadUrlVisitedMap map[string]bool,  singleManifest SingleManifest, name string, 
-	basePath string, versionId int, fileMap FileMap) {
+	basePath string, versionId int, fileMap *FileMap) {
 	var dependencies = singleManifest.AssetBundleManifest[name].Dependencies
 	//if uploadUrlVisitedMap[name] {
 	//	if false {
@@ -786,7 +792,7 @@ func checkDependencyAssetBundle(uploadUrlVisitedMap map[string]bool,  singleMani
 	judgeNewOrUpdate(fileMap.fileMap[name], versionId, name, assetPath, AssetBundleUploadStartURLPath, UpdateJudgeStrCRC, dependencies, FileInfo{}, fileMap)
 }
 
-func createResourcesUploadStartFileMap(basePath string, versionId int, recursion bool, fileMap FileMap) map[string]string {
+func createResourcesUploadStartFileMap(basePath string, versionId int, recursion bool, fileMap *FileMap) map[string]string {
 
 	// get and make filepath list
 	pathMap := map[string]string{}
@@ -824,7 +830,7 @@ func createResourcesUploadStartFileMap(basePath string, versionId int, recursion
 	return pathMap
 }
 
-func getListOnServer(versionId int, listUrlStr string, fileMap FileMap)(error) {
+func getListOnServer(versionId int, listUrlStr string, fileMap *FileMap)(error) {
 	listUrl := fmt.Sprintf(listUrlStr, Conf.Api.BaseUrl, versionId)
 	serverFileMap       := map[string]interface{}{}
 	err := utils.HttpGet(listUrl, &serverFileMap)
