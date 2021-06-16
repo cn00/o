@@ -204,13 +204,16 @@ func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice,
 		for i, v := range manifestList{
 			go func(f string, ii int){
 				sem <- struct {}{}
-				defer func(){<-sem; }()
-				defer wg.Done()
-				defer log.Println("go::", ii, "/", count, f)
+				defer func(){
+					<-sem;
+					fileChan <- f
+					wg.Done()
+					log.Println("go::", ii, "/", count, f)
+				}()
+
 				//uploadUrlVisitedMapMux.RLock()
 				doOneManifestfile(versionId , manifestPath+"/"+f , tags , priority , useOldTagFlg , buildNumber , cors , corsStr, specificManifest )
 				//uploadUrlVisitedMapMux.RUnlock()
-				fileChan <- f
 			}(v, i)
 		}
 		//errorCount := 0

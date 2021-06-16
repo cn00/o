@@ -146,18 +146,22 @@ func DecodeManifest(manifestFile string) Manifest {
 	}
 
 	var assets = make([]string, 0)
-	for _, asset := range m["Assets"].([]interface{}) {
-		assets = append(assets, asset.(string))
+	ma, ok := m["Assets"]; if ok {
+		for _, asset := range ma.([]interface{}) {
+			assets = append(assets, asset.(string))
+		}
 	}
 	manifest.Assets = assets
 
 	var dependencyList = []string{}
-	for _, dependency := range m["Dependencies"].([]interface{}) {
-		depStr := typeCheck(dependency)
-		//	depStr = depStr[strings.LastIndex(depStr,"/")+1:]
-		dependencyList = append(dependencyList, depStr[strings.LastIndex(depStr,"/")+1:])
+	md, ok := m["Dependencies"]
+	if ok {
+		for _, dependency := range md.([]interface{}) {
+			depStr := typeCheck(dependency)
+			//	depStr = depStr[strings.LastIndex(depStr,"/")+1:]
+			dependencyList = append(dependencyList, depStr[strings.LastIndex(depStr,"/")+1:])
+		}
 	}
-
 	manifest.Dependencies = dependencyList
 
 	return manifest
