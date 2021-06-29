@@ -6,7 +6,7 @@ api:
 	CGO_ENABLED=0 go build -x -ldflags "-X main.octoVersion=$(VERSION) -X main.octoRevision=$(REV)" octo-api
 apirun:
 	CGO_ENABLED=0 go run -x -ldflags "-X main.octoVersion=$(VERSION) -X main.octoRevision=$(REV)" octo-api
-admin:
+adm:
 	CGO_ENABLED=0 go build -x -ldflags "-X main.octoVersion=$(VERSION) -X main.octoRevision=$(REV)" octo-admin
 admrun:
 	CGO_ENABLED=0 go run -x -ldflags "-X main.octoVersion=$(VERSION) -X main.octoRevision=$(REV)" octo-admin

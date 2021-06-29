@@ -1,4 +1,4 @@
-module github.com/QualiArts/hilo-octo-server
+module hilo-octo-server
 
 go 1.14
 

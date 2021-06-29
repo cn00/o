@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	//"github.com/ahmetb/go-linq/v3"
 	"github.com/codegangsta/cli"
 	"runtime"
 	"strconv"
@@ -132,111 +133,6 @@ type FileMap struct{
 	pathMap             map[string]string
 	ErrorFileMap        map[string]string
 	option UploadOption
-}
-
-func doOneManifestfile(versionId int, manifestPath string, tags cli.StringSlice, priority int, useOldTagFlg bool,
-	buildNumber string, cors bool, corsStr, specificManifest string) {
-
-
-	start := time.Now()
-
-	//singleManifest := DecodeManifest(manifestPath)
-	singleManifest := DecodeBundleManifest(manifestPath)
-	if singleManifest != nil {
-		//err := try.Do(func(attempt int) (retry bool, err error) {
-		var fileMap = FileMap{}
-		fileMap.option.tag = strings.Join(tags, ",")
-		fileMap.option.priority = priority
-		fileMap.option.buildNumber = buildNumber
-		fileMap.uploadedFileList    = []NewFile{}
-		fileMap.objectNameMap       = map[string]string{}
-		fileMap.planUploadFileMap   = map[string]GCSFile{}
-		fileMap.serverFileMap       = map[string]interface{}{}
-		fileMap.fileMap             = map[string]interface{}{}
-		fileMap.pathMap             = map[string]string{}
-		fileMap.ErrorFileMap        = map[string]string{}
-		fileMap.option 				= UploadOption{}
-		
-			gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, &fileMap)
-	
-			basePath := filepath.Dir(manifestPath)
-		
-			// 创建上传信息
-			createAssetBundleUploadInfo(*singleManifest, basePath, specificManifest, versionId, &fileMap)
-		
-			depsChangedCount := len(fileMap.uploadedFileList)
-		
-			// GCPのGCS上传到
-			assetCount := startUploadToGCP(gcs, priority, tags, buildNumber, UploadTypeAssetBundle, &fileMap)
-		
-			// 上传结果OCTO API发送到
-			endUpload(useOldTagFlg, versionId, AssetBundleUploadAllURLPath, &fileMap)
-		
-			elapsed := time.Since(start)
-			log.Printf("Uploaded AssetBundle count: %d, Deps changed count: %d, Elapsed Time: %f Seconds\n", assetCount, depsChangedCount, elapsed.Seconds())
-		
-			printErrorFile()
-			//return false, nil
-		//})
-		//log.Println("doOneManifestfile", manifestPath, err)
-	}
-}
-
-//UploadAssetBundle 
-func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice, priority int, useOldTagFlg bool,
-	buildNumber string, cors bool, corsStr, specificManifest string) {
-
-	log.Println("UploadAssetBundle：", manifestPath)
-	mf, _ := os.Stat(manifestPath)
-	if mf.IsDir(){
-		ncpu := runtime.NumCPU()*3
-		log.Println("遍历文件夹：", manifestPath, "ncpu:", ncpu)
-		manifests, _ := ioutil.ReadDir(manifestPath)
-		//mms := linq.From(manifests).Where(func(i FileInfo) {strings.HasSuffix(i.Name(), ".manifest")})
-		var wg sync2.WaitGroup
-		sem := make(chan struct{}, ncpu)
-		fileChan := make(chan string, ncpu)
-		manifestList := []string{}
-		for _, mi := range manifests {
-			if (!mi.IsDir() && strings.HasSuffix(mi.Name(), ".manifest")) {
-				manifestList = append(manifestList, mi.Name())
-				//doOneManifestfile(versionId , manifestPath+"/"+mi.Name() , tags , priority , useOldTagFlg , buildNumber , cors , corsStr, specificManifest )
-			}
-		}
-		log.Println("manifestList", len(manifestList))
-		count := len(manifestList)
-		wg.Add(count)
-		//var uploadUrlVisitedMapMux sync2.RWMutex
-
-		for i, v := range manifestList{
-			go func(f string, ii int){
-				sem <- struct {}{}
-				defer func(){
-					<-sem;
-					fileChan <- f
-					wg.Done()
-					log.Println("go::", ii, "/", count, f)
-				}()
-
-				//uploadUrlVisitedMapMux.RLock()
-				doOneManifestfile(versionId , manifestPath+"/"+f , tags , priority , useOldTagFlg , buildNumber , cors , corsStr, specificManifest )
-				//uploadUrlVisitedMapMux.RUnlock()
-			}(v, i)
-		}
-		//errorCount := 0
-		for range manifestList {
-			gcsFile := <- fileChan
-			log.Println("doOneManifestfile <- ", gcsFile)
-		}
-		wg.Wait()
-		close(sem)
-
-	} else {
-		log.Println("单文件：", manifestPath)
-		doOneManifestfile(versionId , manifestPath , tags , priority , useOldTagFlg ,
-			buildNumber , cors , corsStr, specificManifest )
-	}
-
 }
 
 // AssetBundle上传处理顺序
@@ -503,7 +399,7 @@ func startUploadToGCP(gcs *GoogleCloudStorage, priority int, tags cli.StringSlic
 			defer func() { <-sem }()
 			defer wg.Done()
 			defer  log.Println("<-sem:", ii)
-			//fileChan <- gcs.uploadWithChan(f.FilePath, f.FileName, f.AssetBundleName, f.ObjectName, f.Dependencies)
+			fileChan <- gcs.uploadWithChan(f.FilePath, f.FileName, f.AssetBundleName, f.ObjectName, f.Dependencies)
 			gcsFile := GCSFile{f.FilePath, f.FileName, f.AssetBundleName, f.ObjectName, "", f.Dependencies, nil}
 			if gcsFile.Err == nil {
 				createUploadedNewFileList(gcsFile, priority, tags, buildNumber, uploadType, fileMap)
@@ -668,10 +564,31 @@ func createAssetBundleUploadStartFileMapAndObjectMap(uploadUrlVisitedMap map[str
 				AssetBundleUploadStartURLPath, UpdateJudgeStrCRC, dependencies, FileInfo{}, fileMap)
 		}
 	} else {
+		//var wg sync2.WaitGroup
+		//ncpu := runtime.NumCPU()
+		//sem := make(chan string, ncpu)
+		//count := len(singleManifest.AssetBundleManifest)
+		//log.Println("checkDependencyAssetBundle", count)
+		//
+		//wg.Add(count)
+
 		// 如果不是指定特定文件，则递归检查依赖关系
-		for name := range singleManifest.AssetBundleManifest {
-			checkDependencyAssetBundle(uploadUrlVisitedMap, singleManifest, name, basePath, versionId, fileMap)
+		//idx := 0
+		for name, _ := range singleManifest.AssetBundleManifest {
+			//idx++
+			//go func(nm string, i int) {
+			//	sem <- nm
+			//	
+			//	defer func() {
+			//		<-sem
+			//		wg.Done()
+			//		log.Println("checkDependencyAssetBundle:", i, "/", count, nm)
+			//	}()
+				checkDependencyAssetBundle(uploadUrlVisitedMap, singleManifest, name, basePath, versionId, fileMap)
+			//}(name, idx)
 		}
+		//wg.Wait()
+		//defer close(sem)
 	}
 	return singleManifest, basePath
 }
@@ -768,6 +685,7 @@ dependencies []string, fileInfo FileInfo, fileMap *FileMap) {
 	log.Println("judgeNewOrUpdate_change", name)
 }
 
+//var uploadUrlVisitedMapWLock = sync2.RWMutex{}
 func checkDependencyAssetBundle(uploadUrlVisitedMap map[string]bool,  singleManifest SingleManifest, name string, 
 	basePath string, versionId int, fileMap *FileMap) {
 	var dependencies = singleManifest.AssetBundleManifest[name].Dependencies
@@ -776,6 +694,8 @@ func checkDependencyAssetBundle(uploadUrlVisitedMap map[string]bool,  singleMani
 	//		log.Println("[DEBUG] already visited:", name)
 	//	}
 	//}
+
+	//uploadUrlVisitedMapWLock.Lock()
 	uploadUrlVisitedMap[name] = true
 
 	// 检查依赖关系
@@ -785,6 +705,7 @@ func checkDependencyAssetBundle(uploadUrlVisitedMap map[string]bool,  singleMani
 			checkDependencyAssetBundle(uploadUrlVisitedMap, singleManifest, dependency, basePath, versionId, fileMap)
 		}
 	}
+	//uploadUrlVisitedMapWLock.Unlock()
 
 	assetPath := filepath.FromSlash(basePath + string(os.PathSeparator) + name)
 

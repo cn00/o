@@ -228,7 +228,8 @@ func (*AssetBundleService) uploadAll(app models.App, version int, json []NewFile
 				Crc:         file.Crc,
 				Md5:         file.Md5,
 				Url:         urlString,
-				UpdDatetime: time.Now()}
+				UpdDatetime: time.Now(),
+			}
 			err := fileUrlDao.AddUrl(url, tx)
 			if err != nil {
 				return 0, err

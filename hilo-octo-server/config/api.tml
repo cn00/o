@@ -5,13 +5,14 @@ minimum_cli_version = 0.0
 env_check = false
 
 [database.master]
-addrs = "t5.local:3306"
+#addrs = "t5.local:3306"
+addrs = "cn.local:3306"
 dbname = "dark_octo"
 user = "dark"
 password = "654123"
 
 [database.slave]
-addrs = "localhost:3306"
+addrs = "cn:3306"
 dbname = "dark_octo"
 user = "dark"
 password = "654123"
@@ -27,5 +28,5 @@ default = "http://cn.local:8888"
 #default = "https://storage.googleapis.com"
 
 [cdn.apps]
-1 = "http://cn.local:8888"
+1 = "http://cn.local:8888/"
 #1 = "https://dte55e4tmkmud.cloudfront.net"

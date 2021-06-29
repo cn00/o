@@ -67,8 +67,8 @@ func DecodeBundleManifest(manifestFile string) *SingleManifest {
 	manifest := new(SingleManifest)
 	manifest.ManifestFileVersion = manifest1.ManifestFileVersion
 	var assetBundleMap = map[string]AssetBundleInfo{}
-	
-	assetName := manifestFile[strings.LastIndex(manifestFile,"/")+1:strings.LastIndex(manifestFile,".")]
+
+	assetName := manifestFile[strings.LastIndex(manifestFile, "/")+1 : strings.LastIndex(manifestFile, ".")]
 	//crc := m["CRC"].(uint32)
 	//var dependencyList = []string{}
 	//for _, dependency := range m["Dependencies"].([]interface{}) {
@@ -78,13 +78,9 @@ func DecodeBundleManifest(manifestFile string) *SingleManifest {
 	//}
 	assetBundleMap[assetName] = AssetBundleInfo{Dependencies: manifest1.Dependencies, CRC: manifest1.CRC}
 	manifest.AssetBundleManifest = assetBundleMap
-	
-	if len(manifest1.Dependencies) > 0 {
-		return manifest
-	} else {
-		return nil
-	}
+	return manifest
 }
+
 
 func DecodeSingleManifest(manifestFile string) SingleManifest {
 	buf, err := ioutil.ReadFile(manifestFile)
@@ -150,8 +146,6 @@ func DecodeManifest(manifestFile string) Manifest {
 		for _, asset := range ma.([]interface{}) {
 			assets = append(assets, asset.(string))
 		}
-	}else{
-		log.Println("Assets_nil", manifestFile)
 	}
 	manifest.Assets = assets
 
@@ -164,11 +158,9 @@ func DecodeManifest(manifestFile string) Manifest {
 			//	depStr = depStr[strings.LastIndex(depStr,"/")+1:]
 			dependencyList = append(dependencyList, depStr)
 		}
-	}else{
-		log.Println("Dependencies_nil", manifestFile)
 	}
 	manifest.Dependencies = dependencyList
 
-	log.Println("Dependencies_len", len(dependencyList), "Assets_len", len(assets), manifestFile, strings.Join(dependencyList, "|"))
+	//log.Println(manifestFile, "Dependencies_len", len(dependencyList), "Assets_len", len(assets))
 	return manifest
 }

@@ -1,4 +1,4 @@
-module github.com/QualiArts/hilo-octo-cli
+module hilo-octo-cli
 
 go 1.14
 

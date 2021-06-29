@@ -93,10 +93,21 @@ func main() {
 			Name:    "uploadOneAssetBundle",
 			Aliases: []string{"uab"},
 			Usage:   "upload one assetbundle which has diffrent crc.",
+			Before: before,
 			Action: func(c *cli.Context) {
-				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
+				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"),
+					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), 
+					c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"), c.String("filter"), c)
 			},
 			Flags: append([]cli.Flag{
+				cli.BoolFlag{
+					Name:  "list, l",
+					Usage: "manifest list module",
+				},
+				cli.StringFlag{
+					Name:  "filter, f",
+					Usage: "filter manifest",
+				},
 				cli.IntFlag{
 					Name:  "version, v",
 					Usage: "target asset versionId",
@@ -126,7 +137,6 @@ func main() {
 					Usage: "Unity Specific ManifestFaile",
 				},
 			}, globalFlags...),
-			Before: before,
 		},
 
 		{
