@@ -4,6 +4,7 @@ type Config struct {
 	Api ApiConfig `toml:"api"`
 	App AppConfig `toml:"app"`
 	Oss OSSConfig `toml:"oss"`
+	Cos CosConfig `toml:"cos"`
 }
 
 type ApiConfig struct {
@@ -11,7 +12,7 @@ type ApiConfig struct {
 }
 
 type AppConfig struct {
-	Id int `toml:"id"`
+	Id     int    `toml:"id"`
 	Secret string `toml:"secret"`
 }
 
@@ -21,4 +22,11 @@ type OSSConfig struct {
 	Endpoint     string `toml:"Endpoint"`
 	Bucket       string `toml:"Bucket"`
 	RootDir      string `toml:"RootDir"`
+}
+
+type CosConfig struct {
+	BaseUrl   string `toml:"BaseUrl"`
+	SecretID  string `toml:"SecretID"`
+	SecretKey string `toml:"SecretKey"`
+	RootDir   string `toml:"RootDir"`
 }
