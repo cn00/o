@@ -1,0 +1,28 @@
+[Api]
+base_url = "http://10.24.18.127:8880"
+
+[App]
+secret = "and-c68ae00849bdbbf"
+id = 2
+
+# GoogleCloudStorage
+[Gcs]
+projectID = ""
+bucketName = ""
+location = ""
+
+# AliyunOSS
+[Oss]
+AccessKey = "LTAIzzhXf0cKNZ6O"
+AccessSecret = "ovterySfaFxhxs0mMTJCaXSffmp1On"
+Endpoint = "oss.aliyuncs.com"
+Bucket = "a3-dev-patch-oss"
+RootDir = "dark/asset/test01"
+
+# TencentCos
+[Cos]
+# BaseUrl = "https://nier-prod-patch-oss-1304810127.cos.ap-taipei.myqcloud.com"
+BaseUrl = "https://nier-dev-patch-oss-1304810127.cos.ap-taipei.myqcloud.com"
+SecretID = "IKIDU1SlxCMOH7nT1ToHanuQsQySp398yeEl"
+SecretKey = "c6Qcjq8QgmBammdGhtrdLzylSvNwITQB"
+RootDir = "dark/asset/test01"
