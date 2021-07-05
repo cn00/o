@@ -1,10 +1,10 @@
 package main
 
 import (
-	"octo-cli/utils"
 	"github.com/codegangsta/cli"
 	"io/ioutil"
 	"log"
+	"octo-cli/utils"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// 
+//
 func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice, priority int, useOldTagFlg bool,
 	buildNumber string, cors bool, corsStr, specificManifest, filter string, c *cli.Context) {
 
@@ -23,16 +23,17 @@ func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice,
 	}
 	log.Println("UploadAssetBundle：", manifestPath)
 	mf, _ := os.Stat(manifestPath)
-	if mf.IsDir(){
-		ncpu := runtime.NumCPU()*3
+	if mf.IsDir() {
+		ncpu := runtime.NumCPU() * 3
 		log.Println("遍历文件夹：", manifestPath, "ncpu:", ncpu)
 		manifests, _ := ioutil.ReadDir(manifestPath)
 		manifestList := []string{}
 		for _, mi := range manifests {
 			if !mi.IsDir() && strings.HasSuffix(mi.Name(), ".manifest") {
 
-				if (len(filter)>0 ) {
-					match, _ := regexp.MatchString(filter, mi.Name()); if ! match {
+				if len(filter) > 0 {
+					match, _ := regexp.MatchString(filter, mi.Name())
+					if !match {
 						continue
 					}
 				}
@@ -44,20 +45,17 @@ func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice,
 		count := len(manifestList)
 		log.Println("manifestList", count)
 
-		doManyManifestfile(versionId , manifestList , tags , priority , useOldTagFlg , buildNumber , cors , corsStr, specificManifest )
-
+		doManyManifestfile(versionId, manifestList, tags, priority, useOldTagFlg, buildNumber, cors, corsStr, specificManifest)
 
 	} else {
 		log.Println("单文件：", manifestPath)
-		doManyManifestfile(versionId , []string{manifestPath}, tags , priority, useOldTagFlg, buildNumber, cors, corsStr, specificManifest )
+		doManyManifestfile(versionId, []string{manifestPath}, tags, priority, useOldTagFlg, buildNumber, cors, corsStr, specificManifest)
 	}
 
 }
 
-
 func doManyManifestfile(versionId int, manifestPath []string, tags cli.StringSlice, priority int, useOldTagFlg bool,
 	buildNumber string, cors bool, corsStr, specificManifest string) {
-
 
 	start := time.Now()
 
@@ -69,21 +67,22 @@ func doManyManifestfile(versionId int, manifestPath []string, tags cli.StringSli
 		fileMap.option.tag = strings.Join(tags, ",")
 		fileMap.option.priority = priority
 		fileMap.option.buildNumber = buildNumber
-		fileMap.uploadedFileList    = []NewFile{}
-		fileMap.objectNameMap       = map[string]string{}
-		fileMap.planUploadFileMap   = map[string]GCSFile{}
-		fileMap.serverFileMap       = map[string]interface{}{}
-		fileMap.fileMap             = map[string]interface{}{}
-		fileMap.pathMap             = map[string]string{}
-		fileMap.ErrorFileMap        = map[string]string{}
-		fileMap.option 				= UploadOption{}
+		fileMap.uploadedFileList = []NewFile{}
+		fileMap.objectNameMap = map[string]string{}
+		fileMap.planUploadFileMap = map[string]GCSFile{}
+		fileMap.serverFileMap = map[string]interface{}{}
+		fileMap.fileMap = map[string]interface{}{}
+		fileMap.pathMap = map[string]string{}
+		fileMap.ErrorFileMap = map[string]string{}
+		fileMap.option = UploadOption{}
 
 		err := getListOnServer(versionId, AssetBundleListURLPath, &fileMap)
 		if err != nil {
 			utils.Fatal(err)
 		}
 		//gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, &fileMap)
-		oss :=  NewAliyunOSS()
+		//oss :=  NewAliyunOSS()
+		oss := NewTencentCOS()
 
 		basePath := filepath.Dir(manifestPath[0])
 
@@ -108,7 +107,6 @@ func doManyManifestfile(versionId int, manifestPath []string, tags cli.StringSli
 	}
 }
 
-
 func DecodeBundleManifests(manifestFiles []string) *SingleManifest {
 	manifest := new(SingleManifest)
 	var assetBundleMap = map[string]AssetBundleInfo{}
@@ -123,4 +121,3 @@ func DecodeBundleManifests(manifestFiles []string) *SingleManifest {
 	manifest.AssetBundleManifest = assetBundleMap
 	return manifest
 }
-
