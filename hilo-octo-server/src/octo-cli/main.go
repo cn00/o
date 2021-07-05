@@ -93,13 +93,17 @@ func main() {
 			Name:    "uploadOneAssetBundle",
 			Aliases: []string{"uab"},
 			Usage:   "upload one assetbundle which has diffrent crc.",
-			Before: before,
+			Before:  before,
 			Action: func(c *cli.Context) {
 				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"),
-					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), 
+					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"),
 					c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"), c.String("filter"), c)
 			},
 			Flags: append([]cli.Flag{
+				cli.StringFlag{
+					Name:  "supplier, s",
+					Usage: "supplier oss for aliyun or cos for tencent",
+				},
 				cli.BoolFlag{
 					Name:  "list, l",
 					Usage: "manifest list module",
@@ -143,7 +147,7 @@ func main() {
 			Name:    "uploadAllAssetBundles",
 			Aliases: []string{"ua"},
 			Usage:   "upload all assetbundle which has diffrent crc.",
-			Before: before,
+			Before:  before,
 			Action: func(c *cli.Context) {
 				MultiUploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
 			},
@@ -183,7 +187,7 @@ func main() {
 			Name:    "uploadAllResources",
 			Aliases: []string{"uar"},
 			Usage:   "upload all resources which has diffrent md5 in your specific directory.",
-			Before: before,
+			Before:  before,
 			Action: func(c *cli.Context) {
 				MultiUploadResources(c.Int("version"), c.String("basedir"), c.StringSlice("tags"),
 					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"),

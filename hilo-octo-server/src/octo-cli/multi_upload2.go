@@ -13,7 +13,12 @@ import (
 	"time"
 )
 
-//
+type IUploadSupplier interface {
+	startUploadToOSS(priority int, tags cli.StringSlice, buildNumber, uploadType string, fileMap *FileMap) int
+}
+
+var ossRoCos = "cos"
+
 func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice, priority int, useOldTagFlg bool,
 	buildNumber string, cors bool, corsStr, specificManifest, filter string, c *cli.Context) {
 
@@ -21,6 +26,8 @@ func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice,
 	if listMode {
 
 	}
+	ossRoCos = c.String("supplier")
+
 	log.Println("UploadAssetBundle：", manifestPath)
 	mf, _ := os.Stat(manifestPath)
 	if mf.IsDir() {
@@ -80,9 +87,6 @@ func doManyManifestfile(versionId int, manifestPath []string, tags cli.StringSli
 		if err != nil {
 			utils.Fatal(err)
 		}
-		//gcs, _ := prepareUpload(versionId, AssetBundleListURLPath, cors, corsStr, UploadTypeAssetBundle, &fileMap)
-		//oss :=  NewAliyunOSS()
-		oss := NewTencentCOS()
 
 		basePath := filepath.Dir(manifestPath[0])
 
@@ -92,6 +96,14 @@ func doManyManifestfile(versionId int, manifestPath []string, tags cli.StringSli
 		depsChangedCount := len(fileMap.uploadedFileList)
 
 		// OSS 上传
+		var oss IUploadSupplier
+		if ossRoCos == "ocs" {
+			oss = NewTencentCOS()
+		} else if ossRoCos == "oss" {
+			oss = NewAliyunOSS()
+		} else if ossRoCos == "gcs" {
+			oss = NewGoogleCloud()
+		}
 		assetCount := oss.startUploadToOSS(priority, tags, buildNumber, UploadTypeAssetBundle, &fileMap)
 
 		// 上传结果OCTO API发送到
