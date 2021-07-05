@@ -3,7 +3,7 @@ package config
 type Config struct {
 	Api ApiConfig `toml:"api"`
 	App AppConfig `toml:"app"`
-	Gcp GcsConfig `toml:"gcs"`
+	Gcs GcsConfig `toml:"gcs"`
 	Oss OSSConfig `toml:"oss"`
 	Cos CosConfig `toml:"cos"`
 }

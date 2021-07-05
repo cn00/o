@@ -47,7 +47,7 @@ type GCPCORSValues struct {
 }
 
 func NewGoogleCloud() *GoogleCloudStorage {
-	return NewGoogleCloudStorage(Conf.Gcp.ProjectID, Conf.Gcp.BucketName, Conf.Gcp.Location)
+	return NewGoogleCloudStorage(Conf.Gcs.ProjectID, Conf.Gcs.BucketName, Conf.Gcs.Location)
 }
 
 // NewGoogleCloudStorage creates a New GCS
