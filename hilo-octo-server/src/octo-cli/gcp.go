@@ -21,6 +21,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/codegangsta/cli"
 	"io"
 	"log"
 	"os"
@@ -45,13 +46,19 @@ type GCPCORSValues struct {
 	ResponseHeaders []string      `json:"responseHeaders"`
 }
 
+func NewGoogleCloud() *GoogleCloudStorage {
+	return NewGoogleCloudStorage(Conf.Gcp.ProjectID, Conf.Gcp.BucketName, Conf.Gcp.Location)
+}
+
 // NewGoogleCloudStorage creates a New GCS
 func NewGoogleCloudStorage(projectID string, bucketName string, location string) *GoogleCloudStorage {
 	log.Printf("NewGCS projectId : %v, bucketName : %v, location : %v\n", projectID, bucketName, location)
 	gcs := &GoogleCloudStorage{projectID, bucketName, location}
 	return gcs
 }
-
+func (gcs *GoogleCloudStorage) startUploadToOSS(priority int, tags cli.StringSlice, buildNumber, uploadType string, fileMap *FileMap) int {
+	return startUploadToGCP(gcs, priority, tags, buildNumber, uploadType, fileMap)
+}
 func (gcs *GoogleCloudStorage) createBucket() {
 
 	ctx := context.Background()
