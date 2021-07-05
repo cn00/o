@@ -12,10 +12,10 @@ import (
 	"strconv"
 	"strings"
 
-	"octo-cli/utils"
-	"hilo-octo-proto/go/octo"
 	"github.com/codegangsta/cli"
 	"gopkg.in/matryer/try.v1"
+	"hilo-octo-proto/go/octo"
+	"octo-cli/utils"
 
 	"time"
 )
@@ -144,9 +144,7 @@ func makeAssetBundleMap(abList *[]NewFile, visitedMap map[string]bool, gcs *Goog
 	serverFileDataM := serverFileData.(map[string]interface{})
 	serverFileCrc := uint32(serverFileDataM["CRC"].(float64))
 	if serverFileCrc != crc || octo.Data_State(serverFileDataM["State"].(float64)) == octo.Data_DELETE {
-		log.Println(name, "is changed.")
-		log.Println("makeAssetBundleMap old CRC is", serverFileCrc)
-		log.Println("makeAssetBundleMap new CRC is", crc)
+		log.Println(name, "CRC changed.", serverFileCrc, crc)
 
 		encryptedName := serverFileDataM["EncriptedName"].(string)
 		log.Println("encrypted name is", encryptedName)
