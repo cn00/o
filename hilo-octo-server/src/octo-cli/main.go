@@ -90,9 +90,9 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:    "uploadOneAssetBundle",
-			Aliases: []string{"uab"},
-			Usage:   "upload one assetbundle which has diffrent crc.",
+			Name:    "uploadAssetBundleWithMutiManifest",
+			Aliases: []string{"uabmm"},
+			Usage:   "upload assetbundle with mutimanifest which has diffrent crc.",
 			Before:  before,
 			Action: func(c *cli.Context) {
 				UploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"),
@@ -149,7 +149,9 @@ func main() {
 			Usage:   "upload all assetbundle which has diffrent crc.",
 			Before:  before,
 			Action: func(c *cli.Context) {
-				MultiUploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"), c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"), c.String("corsStr"), c.String("specificManifest"))
+				MultiUploadAssetBundle(c.Int("version"), c.String("manifest"), c.StringSlice("tags"),
+					c.Int("priority"), c.Bool("useOldTag"), c.String("buildNumber"), c.Bool("cors"),
+					c.String("corsStr"), c.String("specificManifest"))
 			},
 
 			Flags: append([]cli.Flag{
