@@ -3,6 +3,7 @@ package config
 type Config struct {
 	Api ApiConfig `toml:"api"`
 	App AppConfig `toml:"app"`
+	Gcp GcsConfig `toml:"gcs"`
 	Oss OSSConfig `toml:"oss"`
 	Cos CosConfig `toml:"cos"`
 }
@@ -14,6 +15,12 @@ type ApiConfig struct {
 type AppConfig struct {
 	Id     int    `toml:"id"`
 	Secret string `toml:"secret"`
+}
+
+type GcsConfig struct {
+	ProjectID  string `toml:"projectID"`
+	BucketName string `toml:"bucketName"`
+	Location   string `toml:"location"`
 }
 
 type OSSConfig struct {
