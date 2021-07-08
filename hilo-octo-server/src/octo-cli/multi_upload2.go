@@ -28,10 +28,10 @@ func UploadAssetBundle(versionId int, manifestPath string, tags cli.StringSlice,
 	}
 	ossRoCos = c.String("supplier")
 
-	log.Println("UploadAssetBundle：", manifestPath)
+	log.Println("UploadAssetBundle：", manifestPath, ossRoCos)
 	mf, _ := os.Stat(manifestPath)
 	if mf.IsDir() {
-		ncpu := runtime.NumCPU() * 3
+		ncpu := runtime.NumCPU()
 		log.Println("遍历文件夹：", manifestPath, "ncpu:", ncpu)
 		manifests, _ := ioutil.ReadDir(manifestPath)
 		manifestList := []string{}
@@ -97,7 +97,7 @@ func doManyManifestfile(versionId int, manifestPath []string, tags cli.StringSli
 
 		// OSS 上传
 		var oss IUploadSupplier
-		if ossRoCos == "ocs" {
+		if ossRoCos == "cos" {
 			oss = NewTencentCOS()
 		} else if ossRoCos == "oss" {
 			oss = NewAliyunOSS()
