@@ -17,9 +17,11 @@ require (
 	//github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2 // indirect
 	github.com/pkg/errors v0.8.0
 	github.com/syndtr/goleveldb v1.0.0 // indirect
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.27
 	//github.com/stretchr/testify v1.4.0
 	//github.com/wataru420/contrib v1.4.0
 	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
+	google.golang.org/api v0.28.0
 	gopkg.in/matryer/try.v1 v1.0.0-20150601225556-312d2599e12e
 	gopkg.in/yaml.v2 v2.2.2
 	hilo-octo-proto v0.0.0-00010101000000-000000000000
