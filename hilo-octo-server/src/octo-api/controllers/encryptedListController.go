@@ -46,10 +46,11 @@ func EncryptedListEndpoint(c *gin.Context) {
 		return
 	}
 
-	// version中未设置密码密钥时，将加密API不能使用
-	if version.ApiAesKey == "" {
-		c.String(http.StatusBadRequest, "Doesn't support encrypt")
-	}
+	//// TODO:
+	//// version中未设置密码密钥时，将加密API不能使用
+	//if version.ApiAesKey == "" {
+	//	c.String(http.StatusBadRequest, "ApiAesKey is null")
+	//}
 
 	database, err := downloadService.List(appId, v, r)
 	if err != nil {
@@ -64,7 +65,7 @@ func EncryptedListEndpoint(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	cipherDatabase = database // 不加密
+	cipherDatabase = database // TODO: 先不加密
 	
 	ioutil.WriteFile("database.protobuf.aes256.bin", cipherDatabase, os.ModePerm)
 
