@@ -46,7 +46,7 @@ func mainCos() {
 
 func (oss *TencentCOS) startUploadToOSS(priority int, tags cli.StringSlice, buildNumber, uploadType string, fileMap *FileMap) int {
 	//var wg sync2.WaitGroup
-	chanNum := runtime.NumCPU() * 100
+	chanNum := runtime.NumCPU() * 10 // 超过 10 倍容易出 put error
 	sem := make(chan string, chanNum)
 	uploadChan := make(chan OSSFile, chanNum)
 	count := len(fileMap.planUploadFileMap)
@@ -116,7 +116,7 @@ func (tcos *TencentCOS) uplaodWithRetry(localPath, remotePath string) error {
 	doOnce := func() error {
 		res, err := tcos.client.Object.PutFromFile(context.Background(), remotePath, localPath, options)
 		if err != nil {
-			log.Println("tcos.PutFromFile", remotePath, localPath, err, res.Status, res.Body)
+			log.Println("tcos.PutFromFile", localPath, err, res)
 		}
 		return err
 	}
