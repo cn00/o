@@ -101,7 +101,7 @@ func main() {
 			},
 			Flags: append([]cli.Flag{
 				cli.StringFlag{
-					Name:  "supplier, s",
+					Name:  "supplier, su",
 					Usage: "supplier oss for aliyun or cos for tencent",
 				},
 				cli.BoolFlag{
