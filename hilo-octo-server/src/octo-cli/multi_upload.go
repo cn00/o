@@ -289,8 +289,8 @@ func prepareUpload(versionId int, listUrlString string, cors bool, corsStr, uplo
 	}
 
 	// gcs上bucket创建和cors設定
-	//gcs := createBucket(versionId, cors, corsStr, uploadType, &fileMap)
-	return nil, err
+	gcs := createBucket(versionId, cors, corsStr, uploadType, fileMap.fileMap)
+	return gcs, err
 }
 
 func multiUploadOneResource(versionId int, tags cli.StringSlice, priority int, useOldTagFlg bool, buildNumber string,
@@ -364,7 +364,7 @@ func checkUpdateResourceFile(assetPath string, serverFileData interface{}, fileM
 
 func setUploadNewFileMap(filePath string, fileName string, objectName string, dependencies []string, fileMap *FileMap) {
 	if len(objectName) > 0 {
-		log.Println("setUploadNewFileMap", filePath, fileName, dependencies)
+		//log.Println("setUploadNewFileMap", filePath, fileName, len(dependencies))
 		fileMap.planUploadFileMap[fileName] = GCSFile{
 			FilePath: filePath,
 			FileName: fileName,
@@ -375,6 +375,7 @@ func setUploadNewFileMap(filePath string, fileName string, objectName string, de
 		}
 	}
 }
+
 
 func startUploadToGCP(gcs *GoogleCloudStorage, priority int, tags cli.StringSlice, buildNumber, uploadType string,
 	fileMap *FileMap) int {

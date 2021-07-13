@@ -1,5 +1,6 @@
 package main
 
+// 阿里云 OSS
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
